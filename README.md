@@ -1,5 +1,4 @@
-# 🌍 LinguaAI
-### AI-Powered Intelligent Language Translator
+# 🌍 AI-Powered Intelligent Language Translator
 
 > 🚀 Translate smarter, faster, and more naturally with the power of Google Gemini AI.
 
@@ -13,22 +12,26 @@
 
 # 📖 Overview
 
-**AI-Powered Intelligent Language Translator** is a modern AI-powered language translation application built with **Python**, **Streamlit**, and **Google Gemini AI**. Unlike traditional translators, LinguaAI understands context and allows users to customize the tone and style of translations, producing natural, professional, and accurate results.
+**AI-Powered Intelligent Language Translator** is a modern AI-powered language translation application built with **Python**, **Streamlit**, and **Google Gemini AI**. Unlike traditional translators, this application understands context and allows users to customize the tone and style of translations, producing natural, professional, and accurate results.
 
-Designed with a clean and responsive interface, LinguaAI supports multiple languages, translation history, smart formatting preservation, and several AI-powered enhancements to improve the translation experience.
+Designed with a clean, responsive, and modern interface, the application supports multiple languages, translation history, smart formatting preservation, and several AI-powered enhancements that deliver a premium translation experience.
 
 ---
 
 # ✨ Features
 
-### 🌐 AI Language Translation
+## 🌐 AI Language Translation
+
 - Translate between multiple languages
 - Powered by Google Gemini AI
 - Context-aware translations
 - Natural and accurate results
 
-### 🎭 Tone Selection
-Choose how your translation should sound:
+---
+
+## 🎭 Tone Selection
+
+Choose the translation tone that best fits your needs.
 
 - Default
 - Formal
@@ -43,25 +46,25 @@ Choose how your translation should sound:
 
 ---
 
-### 📝 Translation Styles
+## 📝 Translation Styles
 
 - Natural Translation
 - Literal Translation
 
 ---
 
-### ✨ Smart AI Features
+## ✨ Smart AI Features
 
-- Grammar Correction before translation
-- Preserve formatting
-- Context-aware translation
+- Grammar Correction before Translation
+- Preserve Formatting
+- Context-Aware Translation
 - AI Translation Notes
 - Auto Language Detection
 - Translation Confidence Score
 
 ---
 
-### 📊 Translation Analytics
+## 📊 Translation Analytics
 
 - Word Count
 - Character Count
@@ -72,17 +75,17 @@ Choose how your translation should sound:
 
 ---
 
-### 📂 Translation History
+## 📂 Translation History
 
-- Save every translation
-- Search previous translations
-- Delete individual history
-- Clear all history
-- Export translation history
+- Save Every Translation
+- Search Previous Translations
+- Delete Individual History
+- Clear All History
+- Export Translation History
 
 ---
 
-### 📋 Productivity Features
+## 📋 Productivity Features
 
 - Copy Original Text
 - Copy Translation
@@ -93,14 +96,14 @@ Choose how your translation should sound:
 
 ---
 
-### 🎨 Modern UI
+## 🎨 Modern User Interface
 
-- Glassmorphism Design
-- Responsive Layout
+- Premium Glassmorphism Design
+- Fully Responsive Layout
 - Dark Theme
 - Smooth Animations
-- Premium Dashboard
-- Beautiful Sidebar
+- Interactive Sidebar
+- Modern Dashboard
 
 ---
 
@@ -108,7 +111,7 @@ Choose how your translation should sound:
 
 ## 🏠 Home
 
-- Premium AI Interface
+- Modern AI Dashboard
 - Language Selection
 - Tone Selection
 - Smart Translation Controls
@@ -124,7 +127,7 @@ Choose how your translation should sound:
 
 ---
 
-## 📜 History
+## 📜 Translation History
 
 - Previous Translations
 - Search History
@@ -134,7 +137,7 @@ Choose how your translation should sound:
 
 ## ⚙️ Settings
 
-- Theme Options
+- Theme Settings
 - Default Language
 - Gemini API Status
 
@@ -146,17 +149,17 @@ Choose how your translation should sound:
 |------------|----------|
 | Python | Backend Development |
 | Streamlit | Web Application |
-| Google Gemini API | AI Translation |
-| HTML/CSS | Custom UI |
-| Python-dotenv | Environment Variables |
-| JSON | Translation History |
+| Google Gemini API | AI Translation Engine |
+| HTML/CSS | Custom User Interface |
+| Python-dotenv | Environment Variable Management |
+| JSON | Translation History Storage |
 
 ---
 
 # 📂 Project Structure
 
 ```text
-LinguaAI/
+AI-Powered-Intelligent-Language-Translator/
 │
 ├── app.py
 ├── translator.py
@@ -182,13 +185,13 @@ LinguaAI/
 ### Clone the Repository
 
 ```bash
-git clone https://github.com/yourusername/LinguaAI.git
+git clone https://github.com/yourusername/AI-Powered-Intelligent-Language-Translator.git
 ```
 
 ### Navigate to the Project Folder
 
 ```bash
-cd LinguaAI
+cd AI-Powered-Intelligent-Language-Translator
 ```
 
 ### Install Dependencies
@@ -224,19 +227,19 @@ Select Source Language
 Select Target Language
         │
         ▼
-Choose Tone & Style
+Choose Tone & Translation Style
         │
         ▼
 Google Gemini AI
         │
         ▼
-AI Translation
+Generate Intelligent Translation
         │
         ▼
-Translation Analytics
+Display Translation Analytics
         │
         ▼
-Save to History
+Save Translation History
 ```
 
 ---
@@ -269,11 +272,11 @@ Save to History
 
 - AI-powered multilingual translation
 - Context-aware responses
-- Tone customization
+- Custom translation tones
 - Smart grammar correction
-- Translation history
+- Translation history management
 - Modern and responsive interface
-- Google Gemini integration
+- Google Gemini AI integration
 - Premium user experience
 
 ---
@@ -283,11 +286,11 @@ Save to History
 - 🎤 Speech-to-Text
 - 🔊 Text-to-Speech
 - 📷 OCR Image Translation
-- 📄 Document Translation (PDF & DOCX)
-- ☁️ Cloud Sync
+- 📄 PDF & DOCX Translation
+- ☁️ Cloud Synchronization
 - 👤 User Authentication
-- 🌍 Offline Translation Support
-- 📱 Mobile-Friendly PWA
+- 🌍 Offline Translation Mode
+- 📱 Progressive Web App (PWA)
 - 🤝 Team Collaboration
 
 ---
@@ -302,15 +305,15 @@ Save to History
 
 📈 Meta Ads & Google Ads Specialist
 
-💻 Passionate about building modern AI-powered applications.
+💻 Passionate about building modern AI-powered applications using Artificial Intelligence.
 
 ---
 
 # ⭐ Support
 
-If you found this project useful, consider giving it a **⭐ Star** on GitHub.
+If you found this project helpful, please consider giving it a **⭐ Star** on GitHub.
 
-Your support motivates further development and helps others discover the project.
+Your support encourages continuous improvement and helps others discover the project.
 
 ---
 
@@ -320,6 +323,6 @@ This project is licensed under the **MIT License**.
 
 ---
 
-# 💡 "Translate Beyond Words. Communicate with Intelligence."
+# 💡 *"Translate Beyond Words. Communicate with Intelligence."*
 
 **Built with ❤️ using Python, Streamlit, and Google Gemini AI.**
