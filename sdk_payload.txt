@@ -1,0 +1,723 @@
+--- line  ---
+0092:  * @public
+0093:  */
+0094: const POSSIBLE_ROLES = ["user", "model", "function", "system"];
+0095: /**
+0096:  * Harm categories that would cause prompts or candidates to be blocked.
+0097:  * @public
+0098:  */
+0099: exports.HarmCategory = void 0;
+0100: (function (HarmCategory) {
+0101:     HarmCategory["HARM_CATEGORY_UNSPECIFIED"] = "HARM_CATEGORY_UNSPECIFIED";
+0102:     HarmCategory["HARM_CATEGORY_HATE_SPEECH"] = "HARM_CATEGORY_HATE_SPEECH";
+0103:     HarmCategory["HARM_CATEGORY_SEXUALLY_EXPLICIT"] = "HARM_CATEGORY_SEXUALLY_EXPLICIT";
+0104:     HarmCategory["HARM_CATEGORY_HARASSMENT"] = "HARM_CATEGORY_HARASSMENT";
+0105:     HarmCategory["HARM_CATEGORY_DANGEROUS_CONTENT"] = "HARM_CATEGORY_DANGEROUS_CONTENT";
+0106:     HarmCategory["HARM_CATEGORY_CIVIC_INTEGRITY"] = "HARM_CATEGORY_CIVIC_INTEGRITY";
+0107: })(exports.HarmCategory || (exports.HarmCategory = {}));
+0108: /**
+
+--- line  ---
+0105:     HarmCategory["HARM_CATEGORY_DANGEROUS_CONTENT"] = "HARM_CATEGORY_DANGEROUS_CONTENT";
+0106:     HarmCategory["HARM_CATEGORY_CIVIC_INTEGRITY"] = "HARM_CATEGORY_CIVIC_INTEGRITY";
+0107: })(exports.HarmCategory || (exports.HarmCategory = {}));
+0108: /**
+0109:  * Threshold above which a prompt or candidate will be blocked.
+0110:  * @public
+0111:  */
+0112: exports.HarmBlockThreshold = void 0;
+0113: (function (HarmBlockThreshold) {
+0114:     /** Threshold is unspecified. */
+0115:     HarmBlockThreshold["HARM_BLOCK_THRESHOLD_UNSPECIFIED"] = "HARM_BLOCK_THRESHOLD_UNSPECIFIED";
+0116:     /** Content with NEGLIGIBLE will be allowed. */
+0117:     HarmBlockThreshold["BLOCK_LOW_AND_ABOVE"] = "BLOCK_LOW_AND_ABOVE";
+0118:     /** Content with NEGLIGIBLE and LOW will be allowed. */
+0119:     HarmBlockThreshold["BLOCK_MEDIUM_AND_ABOVE"] = "BLOCK_MEDIUM_AND_ABOVE";
+0120:     /** Content with NEGLIGIBLE, LOW, and MEDIUM will be allowed. */
+0121:     HarmBlockThreshold["BLOCK_ONLY_HIGH"] = "BLOCK_ONLY_HIGH";
+
+--- line  ---
+0122:     /** All content will be allowed. */
+0123:     HarmBlockThreshold["BLOCK_NONE"] = "BLOCK_NONE";
+0124: })(exports.HarmBlockThreshold || (exports.HarmBlockThreshold = {}));
+0125: /**
+0126:  * Probability that a prompt or candidate matches a harm category.
+0127:  * @public
+0128:  */
+0129: exports.HarmProbability = void 0;
+0130: (function (HarmProbability) {
+0131:     /** Probability is unspecified. */
+0132:     HarmProbability["HARM_PROBABILITY_UNSPECIFIED"] = "HARM_PROBABILITY_UNSPECIFIED";
+0133:     /** Content has a negligible chance of being unsafe. */
+0134:     HarmProbability["NEGLIGIBLE"] = "NEGLIGIBLE";
+0135:     /** Content has a low chance of being unsafe. */
+0136:     HarmProbability["LOW"] = "LOW";
+0137:     /** Content has a medium chance of being unsafe. */
+0138:     HarmProbability["MEDIUM"] = "MEDIUM";
+
+--- line  ---
+0139:     /** Content has a high chance of being unsafe. */
+0140:     HarmProbability["HIGH"] = "HIGH";
+0141: })(exports.HarmProbability || (exports.HarmProbability = {}));
+0142: /**
+0143:  * Reason that a prompt was blocked.
+0144:  * @public
+0145:  */
+0146: exports.BlockReason = void 0;
+0147: (function (BlockReason) {
+0148:     // A blocked reason was not specified.
+0149:     BlockReason["BLOCKED_REASON_UNSPECIFIED"] = "BLOCKED_REASON_UNSPECIFIED";
+0150:     // Content was blocked by safety settings.
+0151:     BlockReason["SAFETY"] = "SAFETY";
+0152:     // Content was blocked, but the reason is uncategorized.
+0153:     BlockReason["OTHER"] = "OTHER";
+0154: })(exports.BlockReason || (exports.BlockReason = {}));
+0155: /**
+
+--- line  ---
+0487:                 throw new GoogleGenerativeAIResponseError(`${formatBlockErrorMessage(response)}`, response);
+0488:             }
+0489:             return getText(response);
+0490:         }
+0491:         else if (response.promptFeedback) {
+0492:             throw new GoogleGenerativeAIResponseError(`Text not available. ${formatBlockErrorMessage(response)}`, response);
+0493:         }
+0494:         return "";
+0495:     };
+0496:     /**
+0497:      * TODO: remove at next major version
+0498:      */
+0499:     response.functionCall = () => {
+0500:         if (response.candidates && response.candidates.length > 0) {
+0501:             if (response.candidates.length > 1) {
+0502:                 console.warn(`This response had ${response.candidates.length} ` +
+0503:                     `candidates. Returning function calls from the first candidate only. ` +
+
+--- line  ---
+0509:             console.warn(`response.functionCall() is deprecated. ` +
+0510:                 `Use response.functionCalls() instead.`);
+0511:             return getFunctionCalls(response)[0];
+0512:         }
+0513:         else if (response.promptFeedback) {
+0514:             throw new GoogleGenerativeAIResponseError(`Function call not available. ${formatBlockErrorMessage(response)}`, response);
+0515:         }
+0516:         return undefined;
+0517:     };
+0518:     response.functionCalls = () => {
+0519:         if (response.candidates && response.candidates.length > 0) {
+0520:             if (response.candidates.length > 1) {
+0521:                 console.warn(`This response had ${response.candidates.length} ` +
+0522:                     `candidates. Returning function calls from the first candidate only. ` +
+0523:                     `Access response.candidates directly to use the other candidates.`);
+0524:             }
+0525:             if (hadBadFinishReason(response.candidates[0])) {
+
+--- line  ---
+0526:                 throw new GoogleGenerativeAIResponseError(`${formatBlockErrorMessage(response)}`, response);
+0527:             }
+0528:             return getFunctionCalls(response);
+0529:         }
+0530:         else if (response.promptFeedback) {
+0531:             throw new GoogleGenerativeAIResponseError(`Function call not available. ${formatBlockErrorMessage(response)}`, response);
+0532:         }
+0533:         return undefined;
+0534:     };
+0535:     return response;
+0536: }
+0537: /**
+0538:  * Returns all text found in all parts of first candidate.
+0539:  */
+0540: function getText(response) {
+0541:     var _a, _b, _c, _d;
+0542:     const textStrings = [];
+
+--- line  ---
+0596: function formatBlockErrorMessage(response) {
+0597:     var _a, _b, _c;
+0598:     let message = "";
+0599:     if ((!response.candidates || response.candidates.length === 0) &&
+0600:         response.promptFeedback) {
+0601:         message += "Response was blocked";
+0602:         if ((_a = response.promptFeedback) === null || _a === void 0 ? void 0 : _a.blockReason) {
+0603:             message += ` due to ${response.promptFeedback.blockReason}`;
+0604:         }
+0605:         if ((_b = response.promptFeedback) === null || _b === void 0 ? void 0 : _b.blockReasonMessage) {
+0606:             message += `: ${response.promptFeedback.blockReasonMessage}`;
+0607:         }
+0608:     }
+0609:     else if ((_c = response.candidates) === null || _c === void 0 ? void 0 : _c[0]) {
+0610:         const firstCandidate = response.candidates[0];
+0611:         if (hadBadFinishReason(firstCandidate)) {
+0612:             message += `Candidate was blocked due to ${firstCandidate.finishReason}`;
+
+--- line  ---
+0598:     let message = "";
+0599:     if ((!response.candidates || response.candidates.length === 0) &&
+0600:         response.promptFeedback) {
+0601:         message += "Response was blocked";
+0602:         if ((_a = response.promptFeedback) === null || _a === void 0 ? void 0 : _a.blockReason) {
+0603:             message += ` due to ${response.promptFeedback.blockReason}`;
+0604:         }
+0605:         if ((_b = response.promptFeedback) === null || _b === void 0 ? void 0 : _b.blockReasonMessage) {
+0606:             message += `: ${response.promptFeedback.blockReasonMessage}`;
+0607:         }
+0608:     }
+0609:     else if ((_c = response.candidates) === null || _c === void 0 ? void 0 : _c[0]) {
+0610:         const firstCandidate = response.candidates[0];
+0611:         if (hadBadFinishReason(firstCandidate)) {
+0612:             message += `Candidate was blocked due to ${firstCandidate.finishReason}`;
+0613:             if (firstCandidate.finishMessage) {
+0614:                 message += `: ${firstCandidate.finishMessage}`;
+
+--- line  ---
+0599:     if ((!response.candidates || response.candidates.length === 0) &&
+0600:         response.promptFeedback) {
+0601:         message += "Response was blocked";
+0602:         if ((_a = response.promptFeedback) === null || _a === void 0 ? void 0 : _a.blockReason) {
+0603:             message += ` due to ${response.promptFeedback.blockReason}`;
+0604:         }
+0605:         if ((_b = response.promptFeedback) === null || _b === void 0 ? void 0 : _b.blockReasonMessage) {
+0606:             message += `: ${response.promptFeedback.blockReasonMessage}`;
+0607:         }
+0608:     }
+0609:     else if ((_c = response.candidates) === null || _c === void 0 ? void 0 : _c[0]) {
+0610:         const firstCandidate = response.candidates[0];
+0611:         if (hadBadFinishReason(firstCandidate)) {
+0612:             message += `Candidate was blocked due to ${firstCandidate.finishReason}`;
+0613:             if (firstCandidate.finishMessage) {
+0614:                 message += `: ${firstCandidate.finishMessage}`;
+0615:             }
+
+--- line  ---
+0601:         message += "Response was blocked";
+0602:         if ((_a = response.promptFeedback) === null || _a === void 0 ? void 0 : _a.blockReason) {
+0603:             message += ` due to ${response.promptFeedback.blockReason}`;
+0604:         }
+0605:         if ((_b = response.promptFeedback) === null || _b === void 0 ? void 0 : _b.blockReasonMessage) {
+0606:             message += `: ${response.promptFeedback.blockReasonMessage}`;
+0607:         }
+0608:     }
+0609:     else if ((_c = response.candidates) === null || _c === void 0 ? void 0 : _c[0]) {
+0610:         const firstCandidate = response.candidates[0];
+0611:         if (hadBadFinishReason(firstCandidate)) {
+0612:             message += `Candidate was blocked due to ${firstCandidate.finishReason}`;
+0613:             if (firstCandidate.finishMessage) {
+0614:                 message += `: ${firstCandidate.finishMessage}`;
+0615:             }
+0616:         }
+0617:     }
+
+--- line  ---
+0602:         if ((_a = response.promptFeedback) === null || _a === void 0 ? void 0 : _a.blockReason) {
+0603:             message += ` due to ${response.promptFeedback.blockReason}`;
+0604:         }
+0605:         if ((_b = response.promptFeedback) === null || _b === void 0 ? void 0 : _b.blockReasonMessage) {
+0606:             message += `: ${response.promptFeedback.blockReasonMessage}`;
+0607:         }
+0608:     }
+0609:     else if ((_c = response.candidates) === null || _c === void 0 ? void 0 : _c[0]) {
+0610:         const firstCandidate = response.candidates[0];
+0611:         if (hadBadFinishReason(firstCandidate)) {
+0612:             message += `Candidate was blocked due to ${firstCandidate.finishReason}`;
+0613:             if (firstCandidate.finishMessage) {
+0614:                 message += `: ${firstCandidate.finishMessage}`;
+0615:             }
+0616:         }
+0617:     }
+0618:     return message;
+
+--- line  ---
+0681:  *
+0682:  * @param response - Response from a fetch call
+0683:  */
+0684: function processStream(response) {
+0685:     const inputStream = response.body.pipeThrough(new TextDecoderStream("utf8", { fatal: true }));
+0686:     const responseStream = getResponseStream(inputStream);
+0687:     const [stream1, stream2] = responseStream.tee();
+0688:     return {
+0689:         stream: generateResponseSequence(stream1),
+0690:         response: getResponsePromise(stream2),
+0691:     };
+0692: }
+0693: async function getResponsePromise(stream) {
+0694:     const allResponses = [];
+0695:     const reader = stream.getReader();
+0696:     while (true) {
+0697:         const { done, value } = await reader.read();
+
+--- line  ---
+0682:  * @param response - Response from a fetch call
+0683:  */
+0684: function processStream(response) {
+0685:     const inputStream = response.body.pipeThrough(new TextDecoderStream("utf8", { fatal: true }));
+0686:     const responseStream = getResponseStream(inputStream);
+0687:     const [stream1, stream2] = responseStream.tee();
+0688:     return {
+0689:         stream: generateResponseSequence(stream1),
+0690:         response: getResponsePromise(stream2),
+0691:     };
+0692: }
+0693: async function getResponsePromise(stream) {
+0694:     const allResponses = [];
+0695:     const reader = stream.getReader();
+0696:     while (true) {
+0697:         const { done, value } = await reader.read();
+0698:         if (done) {
+
+--- line  ---
+0717:  * Reads a raw stream from the fetch response and join incomplete
+0718:  * chunks, returning a new stream that provides a single complete
+0719:  * GenerateContentResponse in each iteration.
+0720:  */
+0721: function getResponseStream(inputStream) {
+0722:     const reader = inputStream.getReader();
+0723:     const stream = new ReadableStream({
+0724:         start(controller) {
+0725:             let currentText = "";
+0726:             return pump();
+0727:             function pump() {
+0728:                 return reader
+0729:                     .read()
+0730:                     .then(({ value, done }) => {
+0731:                     if (done) {
+0732:                         if (currentText.trim()) {
+0733:                             controller.error(new GoogleGenerativeAIError("Failed to parse stream"));
+
+--- line  ---
+0718:  * chunks, returning a new stream that provides a single complete
+0719:  * GenerateContentResponse in each iteration.
+0720:  */
+0721: function getResponseStream(inputStream) {
+0722:     const reader = inputStream.getReader();
+0723:     const stream = new ReadableStream({
+0724:         start(controller) {
+0725:             let currentText = "";
+0726:             return pump();
+0727:             function pump() {
+0728:                 return reader
+0729:                     .read()
+0730:                     .then(({ value, done }) => {
+0731:                     if (done) {
+0732:                         if (currentText.trim()) {
+0733:                             controller.error(new GoogleGenerativeAIError("Failed to parse stream"));
+0734:                             return;
+
+--- line  ---
+0775:  */
+0776: function aggregateResponses(responses) {
+0777:     const lastResponse = responses[responses.length - 1];
+0778:     const aggregatedResponse = {
+0779:         promptFeedback: lastResponse === null || lastResponse === void 0 ? void 0 : lastResponse.promptFeedback,
+0780:     };
+0781:     for (const response of responses) {
+0782:         if (response.candidates) {
+0783:             let candidateIndex = 0;
+0784:             for (const candidate of response.candidates) {
+0785:                 if (!aggregatedResponse.candidates) {
+0786:                     aggregatedResponse.candidates = [];
+0787:                 }
+0788:                 if (!aggregatedResponse.candidates[candidateIndex]) {
+0789:                     aggregatedResponse.candidates[candidateIndex] = {
+0790:                         index: candidateIndex,
+0791:                     };
+
+--- line  ---
+0862:     const response = await makeModelRequest(model, Task.STREAM_GENERATE_CONTENT, apiKey, 
+0863:     /* stream */ true, JSON.stringify(params), requestOptions);
+0864:     return processStream(response);
+0865: }
+0866: async function generateContent(apiKey, model, params, requestOptions) {
+0867:     const response = await makeModelRequest(model, Task.GENERATE_CONTENT, apiKey, 
+0868:     /* stream */ false, JSON.stringify(params), requestOptions);
+0869:     const responseJson = await response.json();
+0870:     const enhancedResponse = addHelpers(responseJson);
+0871:     return {
+0872:         response: enhancedResponse,
+0873:     };
+0874: }
+0875: 
+0876: /**
+0877:  * @license
+0878:  * Copyright 2024 Google LLC
+
+--- line  ---
+0961:     return functionContent;
+0962: }
+0963: function formatCountTokensInput(params, modelParams) {
+0964:     var _a;
+0965:     let formattedGenerateContentRequest = {
+0966:         model: modelParams === null || modelParams === void 0 ? void 0 : modelParams.model,
+0967:         generationConfig: modelParams === null || modelParams === void 0 ? void 0 : modelParams.generationConfig,
+0968:         safetySettings: modelParams === null || modelParams === void 0 ? void 0 : modelParams.safetySettings,
+0969:         tools: modelParams === null || modelParams === void 0 ? void 0 : modelParams.tools,
+0970:         toolConfig: modelParams === null || modelParams === void 0 ? void 0 : modelParams.toolConfig,
+0971:         systemInstruction: modelParams === null || modelParams === void 0 ? void 0 : modelParams.systemInstruction,
+0972:         cachedContent: (_a = modelParams === null || modelParams === void 0 ? void 0 : modelParams.cachedContent) === null || _a === void 0 ? void 0 : _a.name,
+0973:         contents: [],
+0974:     };
+0975:     const containsGenerateContentRequest = params.generateContentRequest != null;
+0976:     if (params.contents) {
+0977:         if (containsGenerateContentRequest) {
+
+--- line  ---
+0971:         systemInstruction: modelParams === null || modelParams === void 0 ? void 0 : modelParams.systemInstruction,
+0972:         cachedContent: (_a = modelParams === null || modelParams === void 0 ? void 0 : modelParams.cachedContent) === null || _a === void 0 ? void 0 : _a.name,
+0973:         contents: [],
+0974:     };
+0975:     const containsGenerateContentRequest = params.generateContentRequest != null;
+0976:     if (params.contents) {
+0977:         if (containsGenerateContentRequest) {
+0978:             throw new GoogleGenerativeAIRequestInputError("CountTokensRequest must have one of contents or generateContentRequest, not both.");
+0979:         }
+0980:         formattedGenerateContentRequest.contents = params.contents;
+0981:     }
+0982:     else if (containsGenerateContentRequest) {
+0983:         formattedGenerateContentRequest = Object.assign(Object.assign({}, formattedGenerateContentRequest), params.generateContentRequest);
+0984:     }
+0985:     else {
+0986:         // Array or string
+0987:         const content = formatNewContent(params);
+
+--- line  ---
+0973:         contents: [],
+0974:     };
+0975:     const containsGenerateContentRequest = params.generateContentRequest != null;
+0976:     if (params.contents) {
+0977:         if (containsGenerateContentRequest) {
+0978:             throw new GoogleGenerativeAIRequestInputError("CountTokensRequest must have one of contents or generateContentRequest, not both.");
+0979:         }
+0980:         formattedGenerateContentRequest.contents = params.contents;
+0981:     }
+0982:     else if (containsGenerateContentRequest) {
+0983:         formattedGenerateContentRequest = Object.assign(Object.assign({}, formattedGenerateContentRequest), params.generateContentRequest);
+0984:     }
+0985:     else {
+0986:         // Array or string
+0987:         const content = formatNewContent(params);
+0988:         formattedGenerateContentRequest.contents = [content];
+0989:     }
+
+--- line  ---
+0974:     };
+0975:     const containsGenerateContentRequest = params.generateContentRequest != null;
+0976:     if (params.contents) {
+0977:         if (containsGenerateContentRequest) {
+0978:             throw new GoogleGenerativeAIRequestInputError("CountTokensRequest must have one of contents or generateContentRequest, not both.");
+0979:         }
+0980:         formattedGenerateContentRequest.contents = params.contents;
+0981:     }
+0982:     else if (containsGenerateContentRequest) {
+0983:         formattedGenerateContentRequest = Object.assign(Object.assign({}, formattedGenerateContentRequest), params.generateContentRequest);
+0984:     }
+0985:     else {
+0986:         // Array or string
+0987:         const content = formatNewContent(params);
+0988:         formattedGenerateContentRequest.contents = [content];
+0989:     }
+0990:     return { generateContentRequest: formattedGenerateContentRequest };
+
+--- line  ---
+0976:     if (params.contents) {
+0977:         if (containsGenerateContentRequest) {
+0978:             throw new GoogleGenerativeAIRequestInputError("CountTokensRequest must have one of contents or generateContentRequest, not both.");
+0979:         }
+0980:         formattedGenerateContentRequest.contents = params.contents;
+0981:     }
+0982:     else if (containsGenerateContentRequest) {
+0983:         formattedGenerateContentRequest = Object.assign(Object.assign({}, formattedGenerateContentRequest), params.generateContentRequest);
+0984:     }
+0985:     else {
+0986:         // Array or string
+0987:         const content = formatNewContent(params);
+0988:         formattedGenerateContentRequest.contents = [content];
+0989:     }
+0990:     return { generateContentRequest: formattedGenerateContentRequest };
+0991: }
+0992: function formatGenerateContentInput(params) {
+
+--- line  ---
+0978:             throw new GoogleGenerativeAIRequestInputError("CountTokensRequest must have one of contents or generateContentRequest, not both.");
+0979:         }
+0980:         formattedGenerateContentRequest.contents = params.contents;
+0981:     }
+0982:     else if (containsGenerateContentRequest) {
+0983:         formattedGenerateContentRequest = Object.assign(Object.assign({}, formattedGenerateContentRequest), params.generateContentRequest);
+0984:     }
+0985:     else {
+0986:         // Array or string
+0987:         const content = formatNewContent(params);
+0988:         formattedGenerateContentRequest.contents = [content];
+0989:     }
+0990:     return { generateContentRequest: formattedGenerateContentRequest };
+0991: }
+0992: function formatGenerateContentInput(params) {
+0993:     let formattedRequest;
+0994:     if (params.contents) {
+
+--- line  ---
+0979:         }
+0980:         formattedGenerateContentRequest.contents = params.contents;
+0981:     }
+0982:     else if (containsGenerateContentRequest) {
+0983:         formattedGenerateContentRequest = Object.assign(Object.assign({}, formattedGenerateContentRequest), params.generateContentRequest);
+0984:     }
+0985:     else {
+0986:         // Array or string
+0987:         const content = formatNewContent(params);
+0988:         formattedGenerateContentRequest.contents = [content];
+0989:     }
+0990:     return { generateContentRequest: formattedGenerateContentRequest };
+0991: }
+0992: function formatGenerateContentInput(params) {
+0993:     let formattedRequest;
+0994:     if (params.contents) {
+0995:         formattedRequest = params;
+
+--- line  ---
+0984:     }
+0985:     else {
+0986:         // Array or string
+0987:         const content = formatNewContent(params);
+0988:         formattedGenerateContentRequest.contents = [content];
+0989:     }
+0990:     return { generateContentRequest: formattedGenerateContentRequest };
+0991: }
+0992: function formatGenerateContentInput(params) {
+0993:     let formattedRequest;
+0994:     if (params.contents) {
+0995:         formattedRequest = params;
+0996:     }
+0997:     else {
+0998:         // Array or string
+0999:         const content = formatNewContent(params);
+1000:         formattedRequest = { contents: [content] };
+
+--- line  ---
+0986:         // Array or string
+0987:         const content = formatNewContent(params);
+0988:         formattedGenerateContentRequest.contents = [content];
+0989:     }
+0990:     return { generateContentRequest: formattedGenerateContentRequest };
+0991: }
+0992: function formatGenerateContentInput(params) {
+0993:     let formattedRequest;
+0994:     if (params.contents) {
+0995:         formattedRequest = params;
+0996:     }
+0997:     else {
+0998:         // Array or string
+0999:         const content = formatNewContent(params);
+1000:         formattedRequest = { contents: [content] };
+1001:     }
+1002:     if (params.systemInstruction) {
+
+--- line  ---
+0988:         formattedGenerateContentRequest.contents = [content];
+0989:     }
+0990:     return { generateContentRequest: formattedGenerateContentRequest };
+0991: }
+0992: function formatGenerateContentInput(params) {
+0993:     let formattedRequest;
+0994:     if (params.contents) {
+0995:         formattedRequest = params;
+0996:     }
+0997:     else {
+0998:         // Array or string
+0999:         const content = formatNewContent(params);
+1000:         formattedRequest = { contents: [content] };
+1001:     }
+1002:     if (params.systemInstruction) {
+1003:         formattedRequest.systemInstruction = formatSystemInstruction(params.systemInstruction);
+1004:     }
+
+--- line  ---
+1150:             this._history = params.history;
+1151:         }
+1152:     }
+1153:     /**
+1154:      * Gets the chat history so far. Blocked prompts are not added to history.
+1155:      * Blocked candidates are not added to history, nor are the prompts that
+1156:      * generated them.
+1157:      */
+1158:     async getHistory() {
+1159:         await this._sendPromise;
+1160:         return this._history;
+1161:     }
+1162:     /**
+1163:      * Sends a chat message and receives a non-streaming
+1164:      * {@link GenerateContentResult}.
+1165:      *
+1166:      * Fields set in the optional {@link SingleRequestOptions} parameter will
+
+--- line  ---
+1151:         }
+1152:     }
+1153:     /**
+1154:      * Gets the chat history so far. Blocked prompts are not added to history.
+1155:      * Blocked candidates are not added to history, nor are the prompts that
+1156:      * generated them.
+1157:      */
+1158:     async getHistory() {
+1159:         await this._sendPromise;
+1160:         return this._history;
+1161:     }
+1162:     /**
+1163:      * Sends a chat message and receives a non-streaming
+1164:      * {@link GenerateContentResult}.
+1165:      *
+1166:      * Fields set in the optional {@link SingleRequestOptions} parameter will
+1167:      * take precedence over the {@link RequestOptions} values provided to
+
+--- line  ---
+1170:     async sendMessage(request, requestOptions = {}) {
+1171:         var _a, _b, _c, _d, _e, _f;
+1172:         await this._sendPromise;
+1173:         const newContent = formatNewContent(request);
+1174:         const generateContentRequest = {
+1175:             safetySettings: (_a = this.params) === null || _a === void 0 ? void 0 : _a.safetySettings,
+1176:             generationConfig: (_b = this.params) === null || _b === void 0 ? void 0 : _b.generationConfig,
+1177:             tools: (_c = this.params) === null || _c === void 0 ? void 0 : _c.tools,
+1178:             toolConfig: (_d = this.params) === null || _d === void 0 ? void 0 : _d.toolConfig,
+1179:             systemInstruction: (_e = this.params) === null || _e === void 0 ? void 0 : _e.systemInstruction,
+1180:             cachedContent: (_f = this.params) === null || _f === void 0 ? void 0 : _f.cachedContent,
+1181:             contents: [...this._history, newContent],
+1182:         };
+1183:         const chatSessionRequestOptions = Object.assign(Object.assign({}, this._requestOptions), requestOptions);
+1184:         let finalResult;
+1185:         // Add onto the chain.
+1186:         this._sendPromise = this._sendPromise
+
+--- line  ---
+1183:         const chatSessionRequestOptions = Object.assign(Object.assign({}, this._requestOptions), requestOptions);
+1184:         let finalResult;
+1185:         // Add onto the chain.
+1186:         this._sendPromise = this._sendPromise
+1187:             .then(() => generateContent(this._apiKey, this.model, generateContentRequest, chatSessionRequestOptions))
+1188:             .then((result) => {
+1189:             var _a;
+1190:             if (isValidResponse(result.response)) {
+1191:                 this._history.push(newContent);
+1192:                 const responseContent = Object.assign({ parts: [], 
+1193:                     // Response seems to come back without a role set.
+1194:                     role: "model" }, (_a = result.response.candidates) === null || _a === void 0 ? void 0 : _a[0].content);
+1195:                 this._history.push(responseContent);
+1196:             }
+1197:             else {
+1198:                 const blockErrorMessage = formatBlockErrorMessage(result.response);
+1199:                 if (blockErrorMessage) {
+
+--- line  ---
+1222:     async sendMessageStream(request, requestOptions = {}) {
+1223:         var _a, _b, _c, _d, _e, _f;
+1224:         await this._sendPromise;
+1225:         const newContent = formatNewContent(request);
+1226:         const generateContentRequest = {
+1227:             safetySettings: (_a = this.params) === null || _a === void 0 ? void 0 : _a.safetySettings,
+1228:             generationConfig: (_b = this.params) === null || _b === void 0 ? void 0 : _b.generationConfig,
+1229:             tools: (_c = this.params) === null || _c === void 0 ? void 0 : _c.tools,
+1230:             toolConfig: (_d = this.params) === null || _d === void 0 ? void 0 : _d.toolConfig,
+1231:             systemInstruction: (_e = this.params) === null || _e === void 0 ? void 0 : _e.systemInstruction,
+1232:             cachedContent: (_f = this.params) === null || _f === void 0 ? void 0 : _f.cachedContent,
+1233:             contents: [...this._history, newContent],
+1234:         };
+1235:         const chatSessionRequestOptions = Object.assign(Object.assign({}, this._requestOptions), requestOptions);
+1236:         const streamPromise = generateContentStream(this._apiKey, this.model, generateContentRequest, chatSessionRequestOptions);
+1237:         // Add onto the chain.
+1238:         this._sendPromise = this._sendPromise
+
+--- line  ---
+1232:             cachedContent: (_f = this.params) === null || _f === void 0 ? void 0 : _f.cachedContent,
+1233:             contents: [...this._history, newContent],
+1234:         };
+1235:         const chatSessionRequestOptions = Object.assign(Object.assign({}, this._requestOptions), requestOptions);
+1236:         const streamPromise = generateContentStream(this._apiKey, this.model, generateContentRequest, chatSessionRequestOptions);
+1237:         // Add onto the chain.
+1238:         this._sendPromise = this._sendPromise
+1239:             .then(() => streamPromise)
+1240:             // This must be handled to avoid unhandled rejection, but jump
+1241:             // to the final catch block with a label to not log this error.
+1242:             .catch((_ignored) => {
+1243:             throw new Error(SILENT_ERROR);
+1244:         })
+1245:             .then((streamResult) => streamResult.response)
+1246:             .then((response) => {
+1247:             if (isValidResponse(response)) {
+1248:                 this._history.push(newContent);
+
+--- line  ---
+1369:      * Fields set in the optional {@link SingleRequestOptions} parameter will
+1370:      * take precedence over the {@link RequestOptions} values provided to
+1371:      * {@link GoogleGenerativeAI.getGenerativeModel }.
+1372:      */
+1373:     async generateContent(request, requestOptions = {}) {
+1374:         var _a;
+1375:         const formattedParams = formatGenerateContentInput(request);
+1376:         const generativeModelRequestOptions = Object.assign(Object.assign({}, this._requestOptions), requestOptions);
+1377:         return generateContent(this.apiKey, this.model, Object.assign({ generationConfig: this.generationConfig, safetySettings: this.safetySettings, tools: this.tools, toolConfig: this.toolConfig, systemInstruction: this.systemInstruction, cachedContent: (_a = this.cachedContent) === null || _a === void 0 ? void 0 : _a.name }, formattedParams), generativeModelRequestOptions);
+1378:     }
+1379:     /**
+1380:      * Makes a single streaming call to the model and returns an object
+1381:      * containing an iterable stream that iterates over all chunks in the
+1382:      * streaming response as well as a promise that returns the final
+1383:      * aggregated response.
+1384:      *
+1385:      * Fields set in the optional {@link SingleRequestOptions} parameter will
+
+--- line  ---
+1371:      * {@link GoogleGenerativeAI.getGenerativeModel }.
+1372:      */
+1373:     async generateContent(request, requestOptions = {}) {
+1374:         var _a;
+1375:         const formattedParams = formatGenerateContentInput(request);
+1376:         const generativeModelRequestOptions = Object.assign(Object.assign({}, this._requestOptions), requestOptions);
+1377:         return generateContent(this.apiKey, this.model, Object.assign({ generationConfig: this.generationConfig, safetySettings: this.safetySettings, tools: this.tools, toolConfig: this.toolConfig, systemInstruction: this.systemInstruction, cachedContent: (_a = this.cachedContent) === null || _a === void 0 ? void 0 : _a.name }, formattedParams), generativeModelRequestOptions);
+1378:     }
+1379:     /**
+1380:      * Makes a single streaming call to the model and returns an object
+1381:      * containing an iterable stream that iterates over all chunks in the
+1382:      * streaming response as well as a promise that returns the final
+1383:      * aggregated response.
+1384:      *
+1385:      * Fields set in the optional {@link SingleRequestOptions} parameter will
+1386:      * take precedence over the {@link RequestOptions} values provided to
+1387:      * {@link GoogleGenerativeAI.getGenerativeModel }.
+
+--- line  ---
+1373:     async generateContent(request, requestOptions = {}) {
+1374:         var _a;
+1375:         const formattedParams = formatGenerateContentInput(request);
+1376:         const generativeModelRequestOptions = Object.assign(Object.assign({}, this._requestOptions), requestOptions);
+1377:         return generateContent(this.apiKey, this.model, Object.assign({ generationConfig: this.generationConfig, safetySettings: this.safetySettings, tools: this.tools, toolConfig: this.toolConfig, systemInstruction: this.systemInstruction, cachedContent: (_a = this.cachedContent) === null || _a === void 0 ? void 0 : _a.name }, formattedParams), generativeModelRequestOptions);
+1378:     }
+1379:     /**
+1380:      * Makes a single streaming call to the model and returns an object
+1381:      * containing an iterable stream that iterates over all chunks in the
+1382:      * streaming response as well as a promise that returns the final
+1383:      * aggregated response.
+1384:      *
+1385:      * Fields set in the optional {@link SingleRequestOptions} parameter will
+1386:      * take precedence over the {@link RequestOptions} values provided to
+1387:      * {@link GoogleGenerativeAI.getGenerativeModel }.
+1388:      */
+1389:     async generateContentStream(request, requestOptions = {}) {
+
+--- line  ---
+1387:      * {@link GoogleGenerativeAI.getGenerativeModel }.
+1388:      */
+1389:     async generateContentStream(request, requestOptions = {}) {
+1390:         var _a;
+1391:         const formattedParams = formatGenerateContentInput(request);
+1392:         const generativeModelRequestOptions = Object.assign(Object.assign({}, this._requestOptions), requestOptions);
+1393:         return generateContentStream(this.apiKey, this.model, Object.assign({ generationConfig: this.generationConfig, safetySettings: this.safetySettings, tools: this.tools, toolConfig: this.toolConfig, systemInstruction: this.systemInstruction, cachedContent: (_a = this.cachedContent) === null || _a === void 0 ? void 0 : _a.name }, formattedParams), generativeModelRequestOptions);
+1394:     }
+1395:     /**
+1396:      * Gets a new {@link ChatSession} instance which can be used for
+1397:      * multi-turn chats.
+1398:      */
+1399:     startChat(startChatParams) {
+1400:         var _a;
+1401:         return new ChatSession(this.apiKey, this.model, Object.assign({ generationConfig: this.generationConfig, safetySettings: this.safetySettings, tools: this.tools, toolConfig: this.toolConfig, systemInstruction: this.systemInstruction, cachedContent: (_a = this.cachedContent) === null || _a === void 0 ? void 0 : _a.name }, startChatParams), this._requestOptions);
+1402:     }
+1403:     /**
+
+

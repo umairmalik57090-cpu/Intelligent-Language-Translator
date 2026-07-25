@@ -1,0 +1,85 @@
+﻿--- line 20 ---
+0017:  * Base parameters for a number of methods.
+0018:  * @public
+0019:  */
+0020: export declare interface BaseParams {
+0021:     safetySettings?: SafetySetting[];
+0022:     generationConfig?: GenerationConfig;
+0023: }
+0024: 
+0025: /**
+0026:  * Fields common to all Schema types.
+0027:  *
+0028:  * @internal
+0029:  */
+0030: export declare interface BaseSchema {
+0031:     /** Optional. Description of the value. */
+0032:     description?: string;
+0033:     /** If true, the value can be null. */
+0034:     nullable?: boolean;
+0035: }
+
+--- line 218 ---
+0215:  * Content type for both prompts and response candidates.
+0216:  * @public
+0217:  */
+0218: export declare interface Content {
+0219:     role: string;
+0220:     parts: Part[];
+0221: }
+0222: 
+0223: /**
+0224:  * A single content embedding.
+0225:  * @public
+0226:  */
+0227: export declare interface ContentEmbedding {
+0228:     values: number[];
+0229: }
+0230: 
+0231: /**
+0232:  * Params for calling {@link GenerativeModel.countTokens}.
+0233:  *
+
+--- line 227 ---
+0224:  * A single content embedding.
+0225:  * @public
+0226:  */
+0227: export declare interface ContentEmbedding {
+0228:     values: number[];
+0229: }
+0230: 
+0231: /**
+0232:  * Params for calling {@link GenerativeModel.countTokens}.
+0233:  *
+0234:  * The request must contain either a {@link Content} array or a
+0235:  * {@link GenerateContentRequest}, but not both. If both are provided
+0236:  * then a {@link GoogleGenerativeAIRequestInputError} is thrown.
+0237:  *
+0238:  * @public
+0239:  */
+0240: export declare interface CountTokensRequest {
+0241:     generateContentRequest?: GenerateContentRequest;
+0242:     contents?: Content[];
+
+--- line 1152 ---
+1149:  * Content part - includes text or image part types.
+1150:  * @public
+1151:  */
+1152: export declare type Part = TextPart | InlineDataPart | FunctionCallPart | FunctionResponsePart | FileDataPart | ExecutableCodePart | CodeExecutionResultPart;
+1153: 
+1154: /**
+1155:  * Possible roles.
+1156:  * @public
+1157:  */
+1158: export declare const POSSIBLE_ROLES: readonly ["user", "model", "function", "system"];
+1159: 
+1160: /**
+1161:  * If the prompt was blocked, this will be populated with `blockReason` and
+1162:  * the relevant `safetyRatings`.
+1163:  * @public
+1164:  */
+1165: export declare interface PromptFeedback {
+1166:     blockReason: BlockReason;
+1167:     safetyRatings: SafetyRating[];
+
+

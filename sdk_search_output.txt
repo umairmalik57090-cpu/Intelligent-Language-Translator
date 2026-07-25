@@ -1,0 +1,890 @@
+﻿--- line 248 ---
+0246:  * @public
+0247:  */
+0248: class GoogleGenerativeAIError extends Error {
+0249:     constructor(message) {
+0250:         super(`[GoogleGenerativeAI Error]: ${message}`);
+0251:     }
+0252: }
+
+--- line 250 ---
+0248: class GoogleGenerativeAIError extends Error {
+0249:     constructor(message) {
+0250:         super(`[GoogleGenerativeAI Error]: ${message}`);
+0251:     }
+0252: }
+0253: /**
+0254:  * Errors in the contents of a response from the model. This includes parsing
+
+--- line 258 ---
+0256:  * @public
+0257:  */
+0258: class GoogleGenerativeAIResponseError extends GoogleGenerativeAIError {
+0259:     constructor(message, response) {
+0260:         super(message);
+0261:         this.response = response;
+0262:     }
+
+--- line 258 ---
+0256:  * @public
+0257:  */
+0258: class GoogleGenerativeAIResponseError extends GoogleGenerativeAIError {
+0259:     constructor(message, response) {
+0260:         super(message);
+0261:         this.response = response;
+0262:     }
+
+--- line 269 ---
+0267:  * @public
+0268:  */
+0269: class GoogleGenerativeAIFetchError extends GoogleGenerativeAIError {
+0270:     constructor(message, status, statusText, errorDetails) {
+0271:         super(message);
+0272:         this.status = status;
+0273:         this.statusText = statusText;
+
+--- line 269 ---
+0267:  * @public
+0268:  */
+0269: class GoogleGenerativeAIFetchError extends GoogleGenerativeAIError {
+0270:     constructor(message, status, statusText, errorDetails) {
+0271:         super(message);
+0272:         this.status = status;
+0273:         this.statusText = statusText;
+
+--- line 281 ---
+0279:  * @public
+0280:  */
+0281: class GoogleGenerativeAIRequestInputError extends GoogleGenerativeAIError {
+0282: }
+0283: /**
+0284:  * Error thrown when a request is aborted, either due to a timeout or
+0285:  * intentional cancellation by the user.
+
+--- line 281 ---
+0279:  * @public
+0280:  */
+0281: class GoogleGenerativeAIRequestInputError extends GoogleGenerativeAIError {
+0282: }
+0283: /**
+0284:  * Error thrown when a request is aborted, either due to a timeout or
+0285:  * intentional cancellation by the user.
+
+--- line 288 ---
+0286:  * @public
+0287:  */
+0288: class GoogleGenerativeAIAbortError extends GoogleGenerativeAIError {
+0289: }
+0290: 
+0291: /**
+0292:  * @license
+
+--- line 288 ---
+0286:  * @public
+0287:  */
+0288: class GoogleGenerativeAIAbortError extends GoogleGenerativeAIError {
+0289: }
+0290: 
+0291: /**
+0292:  * @license
+
+--- line 317 ---
+0315: var Task;
+0316: (function (Task) {
+0317:     Task["GENERATE_CONTENT"] = "generateContent";
+0318:     Task["STREAM_GENERATE_CONTENT"] = "streamGenerateContent";
+0319:     Task["COUNT_TOKENS"] = "countTokens";
+0320:     Task["EMBED_CONTENT"] = "embedContent";
+0321:     Task["BATCH_EMBED_CONTENTS"] = "batchEmbedContents";
+
+--- line 366 ---
+0364:             }
+0365:             catch (e) {
+0366:                 throw new GoogleGenerativeAIRequestInputError(`unable to convert customHeaders value ${JSON.stringify(customHeaders)} to Headers: ${e.message}`);
+0367:             }
+0368:         }
+0369:         for (const [headerName, headerValue] of customHeaders.entries()) {
+0370:             if (headerName === "x-goog-api-key") {
+
+--- line 371 ---
+0369:         for (const [headerName, headerValue] of customHeaders.entries()) {
+0370:             if (headerName === "x-goog-api-key") {
+0371:                 throw new GoogleGenerativeAIRequestInputError(`Cannot set reserved header name ${headerName}`);
+0372:             }
+0373:             else if (headerName === "x-goog-api-client") {
+0374:                 throw new GoogleGenerativeAIRequestInputError(`Header name ${headerName} can only be set using the apiClient field`);
+0375:             }
+
+--- line 374 ---
+0372:             }
+0373:             else if (headerName === "x-goog-api-client") {
+0374:                 throw new GoogleGenerativeAIRequestInputError(`Header name ${headerName} can only be set using the apiClient field`);
+0375:             }
+0376:             headers.append(headerName, headerValue);
+0377:         }
+0378:     }
+
+--- line 410 ---
+0408:     let err = e;
+0409:     if (err.name === "AbortError") {
+0410:         err = new GoogleGenerativeAIAbortError(`Request aborted when fetching ${url.toString()}: ${e.message}`);
+0411:         err.stack = e.stack;
+0412:     }
+0413:     else if (!(e instanceof GoogleGenerativeAIFetchError ||
+0414:         e instanceof GoogleGenerativeAIRequestInputError)) {
+
+--- line 413 ---
+0411:         err.stack = e.stack;
+0412:     }
+0413:     else if (!(e instanceof GoogleGenerativeAIFetchError ||
+0414:         e instanceof GoogleGenerativeAIRequestInputError)) {
+0415:         err = new GoogleGenerativeAIError(`Error fetching from ${url.toString()}: ${e.message}`);
+0416:         err.stack = e.stack;
+0417:     }
+
+--- line 414 ---
+0412:     }
+0413:     else if (!(e instanceof GoogleGenerativeAIFetchError ||
+0414:         e instanceof GoogleGenerativeAIRequestInputError)) {
+0415:         err = new GoogleGenerativeAIError(`Error fetching from ${url.toString()}: ${e.message}`);
+0416:         err.stack = e.stack;
+0417:     }
+0418:     throw err;
+
+--- line 415 ---
+0413:     else if (!(e instanceof GoogleGenerativeAIFetchError ||
+0414:         e instanceof GoogleGenerativeAIRequestInputError)) {
+0415:         err = new GoogleGenerativeAIError(`Error fetching from ${url.toString()}: ${e.message}`);
+0416:         err.stack = e.stack;
+0417:     }
+0418:     throw err;
+0419: }
+
+--- line 434 ---
+0432:         // ignored
+0433:     }
+0434:     throw new GoogleGenerativeAIFetchError(`Error fetching from ${url.toString()}: [${response.status} ${response.statusText}] ${message}`, response.status, response.statusText, errorDetails);
+0435: }
+0436: /**
+0437:  * Generates the request options to be passed to the fetch API.
+0438:  * @param requestOptions - The user-defined request options.
+
+--- line 487 ---
+0485:             }
+0486:             if (hadBadFinishReason(response.candidates[0])) {
+0487:                 throw new GoogleGenerativeAIResponseError(`${formatBlockErrorMessage(response)}`, response);
+0488:             }
+0489:             return getText(response);
+0490:         }
+0491:         else if (response.promptFeedback) {
+
+--- line 492 ---
+0490:         }
+0491:         else if (response.promptFeedback) {
+0492:             throw new GoogleGenerativeAIResponseError(`Text not available. ${formatBlockErrorMessage(response)}`, response);
+0493:         }
+0494:         return "";
+0495:     };
+0496:     /**
+
+--- line 507 ---
+0505:             }
+0506:             if (hadBadFinishReason(response.candidates[0])) {
+0507:                 throw new GoogleGenerativeAIResponseError(`${formatBlockErrorMessage(response)}`, response);
+0508:             }
+0509:             console.warn(`response.functionCall() is deprecated. ` +
+0510:                 `Use response.functionCalls() instead.`);
+0511:             return getFunctionCalls(response)[0];
+
+--- line 514 ---
+0512:         }
+0513:         else if (response.promptFeedback) {
+0514:             throw new GoogleGenerativeAIResponseError(`Function call not available. ${formatBlockErrorMessage(response)}`, response);
+0515:         }
+0516:         return undefined;
+0517:     };
+0518:     response.functionCalls = () => {
+
+--- line 526 ---
+0524:             }
+0525:             if (hadBadFinishReason(response.candidates[0])) {
+0526:                 throw new GoogleGenerativeAIResponseError(`${formatBlockErrorMessage(response)}`, response);
+0527:             }
+0528:             return getFunctionCalls(response);
+0529:         }
+0530:         else if (response.promptFeedback) {
+
+--- line 531 ---
+0529:         }
+0530:         else if (response.promptFeedback) {
+0531:             throw new GoogleGenerativeAIResponseError(`Function call not available. ${formatBlockErrorMessage(response)}`, response);
+0532:         }
+0533:         return undefined;
+0534:     };
+0535:     return response;
+
+--- line 733 ---
+0731:                     if (done) {
+0732:                         if (currentText.trim()) {
+0733:                             controller.error(new GoogleGenerativeAIError("Failed to parse stream"));
+0734:                             return;
+0735:                         }
+0736:                         controller.close();
+0737:                         return;
+
+--- line 747 ---
+0745:                         }
+0746:                         catch (e) {
+0747:                             controller.error(new GoogleGenerativeAIError(`Error parsing JSON response: "${match[1]}"`));
+0748:                             return;
+0749:                         }
+0750:                         controller.enqueue(parsedResponse);
+0751:                         currentText = currentText.substring(match[0].length);
+
+--- line 760 ---
+0758:                     err.stack = e.stack;
+0759:                     if (err.name === "AbortError") {
+0760:                         err = new GoogleGenerativeAIAbortError("Request aborted when reading from the stream");
+0761:                     }
+0762:                     else {
+0763:                         err = new GoogleGenerativeAIError("Error reading from the stream");
+0764:                     }
+
+--- line 763 ---
+0761:                     }
+0762:                     else {
+0763:                         err = new GoogleGenerativeAIError("Error reading from the stream");
+0764:                     }
+0765:                     throw err;
+0766:                 });
+0767:             }
+
+--- line 861 ---
+0859:  * limitations under the License.
+0860:  */
+0861: async function generateContentStream(apiKey, model, params, requestOptions) {
+0862:     const response = await makeModelRequest(model, Task.STREAM_GENERATE_CONTENT, apiKey, 
+0863:     /* stream */ true, JSON.stringify(params), requestOptions);
+0864:     return processStream(response);
+0865: }
+
+--- line 866 ---
+0864:     return processStream(response);
+0865: }
+0866: async function generateContent(apiKey, model, params, requestOptions) {
+0867:     const response = await makeModelRequest(model, Task.GENERATE_CONTENT, apiKey, 
+0868:     /* stream */ false, JSON.stringify(params), requestOptions);
+0869:     const responseJson = await response.json();
+0870:     const enhancedResponse = addHelpers(responseJson);
+
+--- line 953 ---
+0951:     }
+0952:     if (hasUserContent && hasFunctionContent) {
+0953:         throw new GoogleGenerativeAIError("Within a single message, FunctionResponse cannot be mixed with other type of part in the request for sending chat message.");
+0954:     }
+0955:     if (!hasUserContent && !hasFunctionContent) {
+0956:         throw new GoogleGenerativeAIError("No content is provided for sending chat message.");
+0957:     }
+
+--- line 956 ---
+0954:     }
+0955:     if (!hasUserContent && !hasFunctionContent) {
+0956:         throw new GoogleGenerativeAIError("No content is provided for sending chat message.");
+0957:     }
+0958:     if (hasUserContent) {
+0959:         return userContent;
+0960:     }
+
+--- line 966 ---
+0964:     var _a;
+0965:     let formattedGenerateContentRequest = {
+0966:         model: modelParams === null || modelParams === void 0 ? void 0 : modelParams.model,
+0967:         generationConfig: modelParams === null || modelParams === void 0 ? void 0 : modelParams.generationConfig,
+0968:         safetySettings: modelParams === null || modelParams === void 0 ? void 0 : modelParams.safetySettings,
+0969:         tools: modelParams === null || modelParams === void 0 ? void 0 : modelParams.tools,
+0970:         toolConfig: modelParams === null || modelParams === void 0 ? void 0 : modelParams.toolConfig,
+
+--- line 975 ---
+0973:         contents: [],
+0974:     };
+0975:     const containsGenerateContentRequest = params.generateContentRequest != null;
+0976:     if (params.contents) {
+0977:         if (containsGenerateContentRequest) {
+0978:             throw new GoogleGenerativeAIRequestInputError("CountTokensRequest must have one of contents or generateContentRequest, not both.");
+0979:         }
+
+--- line 978 ---
+0976:     if (params.contents) {
+0977:         if (containsGenerateContentRequest) {
+0978:             throw new GoogleGenerativeAIRequestInputError("CountTokensRequest must have one of contents or generateContentRequest, not both.");
+0979:         }
+0980:         formattedGenerateContentRequest.contents = params.contents;
+0981:     }
+0982:     else if (containsGenerateContentRequest) {
+
+--- line 978 ---
+0976:     if (params.contents) {
+0977:         if (containsGenerateContentRequest) {
+0978:             throw new GoogleGenerativeAIRequestInputError("CountTokensRequest must have one of contents or generateContentRequest, not both.");
+0979:         }
+0980:         formattedGenerateContentRequest.contents = params.contents;
+0981:     }
+0982:     else if (containsGenerateContentRequest) {
+
+--- line 983 ---
+0981:     }
+0982:     else if (containsGenerateContentRequest) {
+0983:         formattedGenerateContentRequest = Object.assign(Object.assign({}, formattedGenerateContentRequest), params.generateContentRequest);
+0984:     }
+0985:     else {
+0986:         // Array or string
+0987:         const content = formatNewContent(params);
+
+--- line 990 ---
+0988:         formattedGenerateContentRequest.contents = [content];
+0989:     }
+0990:     return { generateContentRequest: formattedGenerateContentRequest };
+0991: }
+0992: function formatGenerateContentInput(params) {
+0993:     let formattedRequest;
+0994:     if (params.contents) {
+
+--- line 1043 ---
+1041:     user: ["text", "inlineData"],
+1042:     function: ["functionResponse"],
+1043:     model: ["text", "functionCall", "executableCode", "codeExecutionResult"],
+1044:     // System instructions shouldn't be in history anyway.
+1045:     system: ["text"],
+1046: };
+1047: function validateChatHistory(history) {
+
+--- line 1052 ---
+1050:         const { role, parts } = currContent;
+1051:         if (!prevContent && role !== "user") {
+1052:             throw new GoogleGenerativeAIError(`First content should be with role 'user', got ${role}`);
+1053:         }
+1054:         if (!POSSIBLE_ROLES.includes(role)) {
+1055:             throw new GoogleGenerativeAIError(`Each item should include role field. Got ${role} but valid roles are: ${JSON.stringify(POSSIBLE_ROLES)}`);
+1056:         }
+
+--- line 1055 ---
+1053:         }
+1054:         if (!POSSIBLE_ROLES.includes(role)) {
+1055:             throw new GoogleGenerativeAIError(`Each item should include role field. Got ${role} but valid roles are: ${JSON.stringify(POSSIBLE_ROLES)}`);
+1056:         }
+1057:         if (!Array.isArray(parts)) {
+1058:             throw new GoogleGenerativeAIError("Content should have 'parts' property with an array of Parts");
+1059:         }
+
+--- line 1058 ---
+1056:         }
+1057:         if (!Array.isArray(parts)) {
+1058:             throw new GoogleGenerativeAIError("Content should have 'parts' property with an array of Parts");
+1059:         }
+1060:         if (parts.length === 0) {
+1061:             throw new GoogleGenerativeAIError("Each Content should have at least one part");
+1062:         }
+
+--- line 1061 ---
+1059:         }
+1060:         if (parts.length === 0) {
+1061:             throw new GoogleGenerativeAIError("Each Content should have at least one part");
+1062:         }
+1063:         const countFields = {
+1064:             text: 0,
+1065:             inlineData: 0,
+
+--- line 1082 ---
+1080:         for (const key of VALID_PART_FIELDS) {
+1081:             if (!validParts.includes(key) && countFields[key] > 0) {
+1082:                 throw new GoogleGenerativeAIError(`Content with role '${role}' can't contain '${key}' part`);
+1083:             }
+1084:         }
+1085:         prevContent = true;
+1086:     }
+
+--- line 1168 ---
+1166:      * Fields set in the optional {@link SingleRequestOptions} parameter will
+1167:      * take precedence over the {@link RequestOptions} values provided to
+1168:      * {@link GoogleGenerativeAI.getGenerativeModel }.
+1169:      */
+1170:     async sendMessage(request, requestOptions = {}) {
+1171:         var _a, _b, _c, _d, _e, _f;
+1172:         await this._sendPromise;
+
+--- line 1168 ---
+1166:      * Fields set in the optional {@link SingleRequestOptions} parameter will
+1167:      * take precedence over the {@link RequestOptions} values provided to
+1168:      * {@link GoogleGenerativeAI.getGenerativeModel }.
+1169:      */
+1170:     async sendMessage(request, requestOptions = {}) {
+1171:         var _a, _b, _c, _d, _e, _f;
+1172:         await this._sendPromise;
+
+--- line 1174 ---
+1172:         await this._sendPromise;
+1173:         const newContent = formatNewContent(request);
+1174:         const generateContentRequest = {
+1175:             safetySettings: (_a = this.params) === null || _a === void 0 ? void 0 : _a.safetySettings,
+1176:             generationConfig: (_b = this.params) === null || _b === void 0 ? void 0 : _b.generationConfig,
+1177:             tools: (_c = this.params) === null || _c === void 0 ? void 0 : _c.tools,
+1178:             toolConfig: (_d = this.params) === null || _d === void 0 ? void 0 : _d.toolConfig,
+
+--- line 1187 ---
+1185:         // Add onto the chain.
+1186:         this._sendPromise = this._sendPromise
+1187:             .then(() => generateContent(this._apiKey, this.model, generateContentRequest, chatSessionRequestOptions))
+1188:             .then((result) => {
+1189:             var _a;
+1190:             if (isValidResponse(result.response)) {
+1191:                 this._history.push(newContent);
+
+--- line 1187 ---
+1185:         // Add onto the chain.
+1186:         this._sendPromise = this._sendPromise
+1187:             .then(() => generateContent(this._apiKey, this.model, generateContentRequest, chatSessionRequestOptions))
+1188:             .then((result) => {
+1189:             var _a;
+1190:             if (isValidResponse(result.response)) {
+1191:                 this._history.push(newContent);
+
+--- line 1220 ---
+1218:      * Fields set in the optional {@link SingleRequestOptions} parameter will
+1219:      * take precedence over the {@link RequestOptions} values provided to
+1220:      * {@link GoogleGenerativeAI.getGenerativeModel }.
+1221:      */
+1222:     async sendMessageStream(request, requestOptions = {}) {
+1223:         var _a, _b, _c, _d, _e, _f;
+1224:         await this._sendPromise;
+
+--- line 1220 ---
+1218:      * Fields set in the optional {@link SingleRequestOptions} parameter will
+1219:      * take precedence over the {@link RequestOptions} values provided to
+1220:      * {@link GoogleGenerativeAI.getGenerativeModel }.
+1221:      */
+1222:     async sendMessageStream(request, requestOptions = {}) {
+1223:         var _a, _b, _c, _d, _e, _f;
+1224:         await this._sendPromise;
+
+--- line 1226 ---
+1224:         await this._sendPromise;
+1225:         const newContent = formatNewContent(request);
+1226:         const generateContentRequest = {
+1227:             safetySettings: (_a = this.params) === null || _a === void 0 ? void 0 : _a.safetySettings,
+1228:             generationConfig: (_b = this.params) === null || _b === void 0 ? void 0 : _b.generationConfig,
+1229:             tools: (_c = this.params) === null || _c === void 0 ? void 0 : _c.tools,
+1230:             toolConfig: (_d = this.params) === null || _d === void 0 ? void 0 : _d.toolConfig,
+
+--- line 1236 ---
+1234:         };
+1235:         const chatSessionRequestOptions = Object.assign(Object.assign({}, this._requestOptions), requestOptions);
+1236:         const streamPromise = generateContentStream(this._apiKey, this.model, generateContentRequest, chatSessionRequestOptions);
+1237:         // Add onto the chain.
+1238:         this._sendPromise = this._sendPromise
+1239:             .then(() => streamPromise)
+1240:             // This must be handled to avoid unhandled rejection, but jump
+
+--- line 1236 ---
+1234:         };
+1235:         const chatSessionRequestOptions = Object.assign(Object.assign({}, this._requestOptions), requestOptions);
+1236:         const streamPromise = generateContentStream(this._apiKey, this.model, generateContentRequest, chatSessionRequestOptions);
+1237:         // Add onto the chain.
+1238:         this._sendPromise = this._sendPromise
+1239:             .then(() => streamPromise)
+1240:             // This must be handled to avoid unhandled rejection, but jump
+
+--- line 1346 ---
+1344:  * @public
+1345:  */
+1346: class GenerativeModel {
+1347:     constructor(apiKey, modelParams, _requestOptions = {}) {
+1348:         this.apiKey = apiKey;
+1349:         this._requestOptions = _requestOptions;
+1350:         if (modelParams.model.includes("/")) {
+
+--- line 1371 ---
+1369:      * Fields set in the optional {@link SingleRequestOptions} parameter will
+1370:      * take precedence over the {@link RequestOptions} values provided to
+1371:      * {@link GoogleGenerativeAI.getGenerativeModel }.
+1372:      */
+1373:     async generateContent(request, requestOptions = {}) {
+1374:         var _a;
+1375:         const formattedParams = formatGenerateContentInput(request);
+
+--- line 1371 ---
+1369:      * Fields set in the optional {@link SingleRequestOptions} parameter will
+1370:      * take precedence over the {@link RequestOptions} values provided to
+1371:      * {@link GoogleGenerativeAI.getGenerativeModel }.
+1372:      */
+1373:     async generateContent(request, requestOptions = {}) {
+1374:         var _a;
+1375:         const formattedParams = formatGenerateContentInput(request);
+
+--- line 1373 ---
+1371:      * {@link GoogleGenerativeAI.getGenerativeModel }.
+1372:      */
+1373:     async generateContent(request, requestOptions = {}) {
+1374:         var _a;
+1375:         const formattedParams = formatGenerateContentInput(request);
+1376:         const generativeModelRequestOptions = Object.assign(Object.assign({}, this._requestOptions), requestOptions);
+1377:         return generateContent(this.apiKey, this.model, Object.assign({ generationConfig: this.generationConfig, safetySettings: this.safetySettings, tools: this.tools, toolConfig: this.toolConfig, systemInstruction: this.systemInstruction, cachedContent: (_a = this.cachedContent) === null || _a === void 0 ? void 0 : _a.name }, formattedParams), generativeModelRequestOptions);
+
+--- line 1377 ---
+1375:         const formattedParams = formatGenerateContentInput(request);
+1376:         const generativeModelRequestOptions = Object.assign(Object.assign({}, this._requestOptions), requestOptions);
+1377:         return generateContent(this.apiKey, this.model, Object.assign({ generationConfig: this.generationConfig, safetySettings: this.safetySettings, tools: this.tools, toolConfig: this.toolConfig, systemInstruction: this.systemInstruction, cachedContent: (_a = this.cachedContent) === null || _a === void 0 ? void 0 : _a.name }, formattedParams), generativeModelRequestOptions);
+1378:     }
+1379:     /**
+1380:      * Makes a single streaming call to the model and returns an object
+1381:      * containing an iterable stream that iterates over all chunks in the
+
+--- line 1387 ---
+1385:      * Fields set in the optional {@link SingleRequestOptions} parameter will
+1386:      * take precedence over the {@link RequestOptions} values provided to
+1387:      * {@link GoogleGenerativeAI.getGenerativeModel }.
+1388:      */
+1389:     async generateContentStream(request, requestOptions = {}) {
+1390:         var _a;
+1391:         const formattedParams = formatGenerateContentInput(request);
+
+--- line 1387 ---
+1385:      * Fields set in the optional {@link SingleRequestOptions} parameter will
+1386:      * take precedence over the {@link RequestOptions} values provided to
+1387:      * {@link GoogleGenerativeAI.getGenerativeModel }.
+1388:      */
+1389:     async generateContentStream(request, requestOptions = {}) {
+1390:         var _a;
+1391:         const formattedParams = formatGenerateContentInput(request);
+
+--- line 1389 ---
+1387:      * {@link GoogleGenerativeAI.getGenerativeModel }.
+1388:      */
+1389:     async generateContentStream(request, requestOptions = {}) {
+1390:         var _a;
+1391:         const formattedParams = formatGenerateContentInput(request);
+1392:         const generativeModelRequestOptions = Object.assign(Object.assign({}, this._requestOptions), requestOptions);
+1393:         return generateContentStream(this.apiKey, this.model, Object.assign({ generationConfig: this.generationConfig, safetySettings: this.safetySettings, tools: this.tools, toolConfig: this.toolConfig, systemInstruction: this.systemInstruction, cachedContent: (_a = this.cachedContent) === null || _a === void 0 ? void 0 : _a.name }, formattedParams), generativeModelRequestOptions);
+
+--- line 1393 ---
+1391:         const formattedParams = formatGenerateContentInput(request);
+1392:         const generativeModelRequestOptions = Object.assign(Object.assign({}, this._requestOptions), requestOptions);
+1393:         return generateContentStream(this.apiKey, this.model, Object.assign({ generationConfig: this.generationConfig, safetySettings: this.safetySettings, tools: this.tools, toolConfig: this.toolConfig, systemInstruction: this.systemInstruction, cachedContent: (_a = this.cachedContent) === null || _a === void 0 ? void 0 : _a.name }, formattedParams), generativeModelRequestOptions);
+1394:     }
+1395:     /**
+1396:      * Gets a new {@link ChatSession} instance which can be used for
+1397:      * multi-turn chats.
+
+--- line 1408 ---
+1406:      * Fields set in the optional {@link SingleRequestOptions} parameter will
+1407:      * take precedence over the {@link RequestOptions} values provided to
+1408:      * {@link GoogleGenerativeAI.getGenerativeModel }.
+1409:      */
+1410:     async countTokens(request, requestOptions = {}) {
+1411:         const formattedParams = formatCountTokensInput(request, {
+1412:             model: this.model,
+
+--- line 1408 ---
+1406:      * Fields set in the optional {@link SingleRequestOptions} parameter will
+1407:      * take precedence over the {@link RequestOptions} values provided to
+1408:      * {@link GoogleGenerativeAI.getGenerativeModel }.
+1409:      */
+1410:     async countTokens(request, requestOptions = {}) {
+1411:         const formattedParams = formatCountTokensInput(request, {
+1412:             model: this.model,
+
+--- line 1412 ---
+1410:     async countTokens(request, requestOptions = {}) {
+1411:         const formattedParams = formatCountTokensInput(request, {
+1412:             model: this.model,
+1413:             generationConfig: this.generationConfig,
+1414:             safetySettings: this.safetySettings,
+1415:             tools: this.tools,
+1416:             toolConfig: this.toolConfig,
+
+--- line 1428 ---
+1426:      * Fields set in the optional {@link SingleRequestOptions} parameter will
+1427:      * take precedence over the {@link RequestOptions} values provided to
+1428:      * {@link GoogleGenerativeAI.getGenerativeModel }.
+1429:      */
+1430:     async embedContent(request, requestOptions = {}) {
+1431:         const formattedParams = formatEmbedContentInput(request);
+1432:         const generativeModelRequestOptions = Object.assign(Object.assign({}, this._requestOptions), requestOptions);
+
+--- line 1428 ---
+1426:      * Fields set in the optional {@link SingleRequestOptions} parameter will
+1427:      * take precedence over the {@link RequestOptions} values provided to
+1428:      * {@link GoogleGenerativeAI.getGenerativeModel }.
+1429:      */
+1430:     async embedContent(request, requestOptions = {}) {
+1431:         const formattedParams = formatEmbedContentInput(request);
+1432:         const generativeModelRequestOptions = Object.assign(Object.assign({}, this._requestOptions), requestOptions);
+
+--- line 1440 ---
+1438:      * Fields set in the optional {@link SingleRequestOptions} parameter will
+1439:      * take precedence over the {@link RequestOptions} values provided to
+1440:      * {@link GoogleGenerativeAI.getGenerativeModel }.
+1441:      */
+1442:     async batchEmbedContents(batchEmbedContentRequest, requestOptions = {}) {
+1443:         const generativeModelRequestOptions = Object.assign(Object.assign({}, this._requestOptions), requestOptions);
+1444:         return batchEmbedContents(this.apiKey, this.model, batchEmbedContentRequest, generativeModelRequestOptions);
+
+--- line 1440 ---
+1438:      * Fields set in the optional {@link SingleRequestOptions} parameter will
+1439:      * take precedence over the {@link RequestOptions} values provided to
+1440:      * {@link GoogleGenerativeAI.getGenerativeModel }.
+1441:      */
+1442:     async batchEmbedContents(batchEmbedContentRequest, requestOptions = {}) {
+1443:         const generativeModelRequestOptions = Object.assign(Object.assign({}, this._requestOptions), requestOptions);
+1444:         return batchEmbedContents(this.apiKey, this.model, batchEmbedContentRequest, generativeModelRequestOptions);
+
+--- line 1468 ---
+1466:  * @public
+1467:  */
+1468: class GoogleGenerativeAI {
+1469:     constructor(apiKey) {
+1470:         this.apiKey = apiKey;
+1471:     }
+1472:     /**
+
+--- line 1473 ---
+1471:     }
+1472:     /**
+1473:      * Gets a {@link GenerativeModel} instance for the provided model name.
+1474:      */
+1475:     getGenerativeModel(modelParams, requestOptions) {
+1476:         if (!modelParams.model) {
+1477:             throw new GoogleGenerativeAIError(`Must provide a model name. ` +
+
+--- line 1475 ---
+1473:      * Gets a {@link GenerativeModel} instance for the provided model name.
+1474:      */
+1475:     getGenerativeModel(modelParams, requestOptions) {
+1476:         if (!modelParams.model) {
+1477:             throw new GoogleGenerativeAIError(`Must provide a model name. ` +
+1478:                 `Example: genai.getGenerativeModel({ model: 'my-model-name' })`);
+1479:         }
+
+--- line 1477 ---
+1475:     getGenerativeModel(modelParams, requestOptions) {
+1476:         if (!modelParams.model) {
+1477:             throw new GoogleGenerativeAIError(`Must provide a model name. ` +
+1478:                 `Example: genai.getGenerativeModel({ model: 'my-model-name' })`);
+1479:         }
+1480:         return new GenerativeModel(this.apiKey, modelParams, requestOptions);
+1481:     }
+
+--- line 1478 ---
+1476:         if (!modelParams.model) {
+1477:             throw new GoogleGenerativeAIError(`Must provide a model name. ` +
+1478:                 `Example: genai.getGenerativeModel({ model: 'my-model-name' })`);
+1479:         }
+1480:         return new GenerativeModel(this.apiKey, modelParams, requestOptions);
+1481:     }
+1482:     /**
+
+--- line 1478 ---
+1476:         if (!modelParams.model) {
+1477:             throw new GoogleGenerativeAIError(`Must provide a model name. ` +
+1478:                 `Example: genai.getGenerativeModel({ model: 'my-model-name' })`);
+1479:         }
+1480:         return new GenerativeModel(this.apiKey, modelParams, requestOptions);
+1481:     }
+1482:     /**
+
+--- line 1480 ---
+1478:                 `Example: genai.getGenerativeModel({ model: 'my-model-name' })`);
+1479:         }
+1480:         return new GenerativeModel(this.apiKey, modelParams, requestOptions);
+1481:     }
+1482:     /**
+1483:      * Creates a {@link GenerativeModel} instance from provided content cache.
+1484:      */
+
+--- line 1483 ---
+1481:     }
+1482:     /**
+1483:      * Creates a {@link GenerativeModel} instance from provided content cache.
+1484:      */
+1485:     getGenerativeModelFromCachedContent(cachedContent, modelParams, requestOptions) {
+1486:         if (!cachedContent.name) {
+1487:             throw new GoogleGenerativeAIRequestInputError("Cached content must contain a `name` field.");
+
+--- line 1485 ---
+1483:      * Creates a {@link GenerativeModel} instance from provided content cache.
+1484:      */
+1485:     getGenerativeModelFromCachedContent(cachedContent, modelParams, requestOptions) {
+1486:         if (!cachedContent.name) {
+1487:             throw new GoogleGenerativeAIRequestInputError("Cached content must contain a `name` field.");
+1488:         }
+1489:         if (!cachedContent.model) {
+
+--- line 1487 ---
+1485:     getGenerativeModelFromCachedContent(cachedContent, modelParams, requestOptions) {
+1486:         if (!cachedContent.name) {
+1487:             throw new GoogleGenerativeAIRequestInputError("Cached content must contain a `name` field.");
+1488:         }
+1489:         if (!cachedContent.model) {
+1490:             throw new GoogleGenerativeAIRequestInputError("Cached content must contain a `model` field.");
+1491:         }
+
+--- line 1490 ---
+1488:         }
+1489:         if (!cachedContent.model) {
+1490:             throw new GoogleGenerativeAIRequestInputError("Cached content must contain a `model` field.");
+1491:         }
+1492:         /**
+1493:          * Not checking tools and toolConfig for now as it would require a deep
+1494:          * equality comparison and isn't likely to be a common case.
+
+--- line 1512 ---
+1510:                     }
+1511:                 }
+1512:                 throw new GoogleGenerativeAIRequestInputError(`Different value for "${key}" specified in modelParams` +
+1513:                     ` (${modelParams[key]}) and cachedContent (${cachedContent[key]})`);
+1514:             }
+1515:         }
+1516:         const modelParamsFromCache = Object.assign(Object.assign({}, modelParams), { model: cachedContent.model, tools: cachedContent.tools, toolConfig: cachedContent.toolConfig, systemInstruction: cachedContent.systemInstruction, cachedContent });
+
+--- line 1516 ---
+1514:             }
+1515:         }
+1516:         const modelParamsFromCache = Object.assign(Object.assign({}, modelParams), { model: cachedContent.model, tools: cachedContent.tools, toolConfig: cachedContent.toolConfig, systemInstruction: cachedContent.systemInstruction, cachedContent });
+1517:         return new GenerativeModel(this.apiKey, modelParamsFromCache, requestOptions);
+1518:     }
+1519: }
+1520: 
+
+--- line 1517 ---
+1515:         }
+1516:         const modelParamsFromCache = Object.assign(Object.assign({}, modelParams), { model: cachedContent.model, tools: cachedContent.tools, toolConfig: cachedContent.toolConfig, systemInstruction: cachedContent.systemInstruction, cachedContent });
+1517:         return new GenerativeModel(this.apiKey, modelParamsFromCache, requestOptions);
+1518:     }
+1519: }
+1520: 
+1521: exports.ChatSession = ChatSession;
+
+--- line 1522 ---
+1520: 
+1521: exports.ChatSession = ChatSession;
+1522: exports.GenerativeModel = GenerativeModel;
+1523: exports.GoogleGenerativeAI = GoogleGenerativeAI;
+1524: exports.GoogleGenerativeAIAbortError = GoogleGenerativeAIAbortError;
+1525: exports.GoogleGenerativeAIError = GoogleGenerativeAIError;
+1526: exports.GoogleGenerativeAIFetchError = GoogleGenerativeAIFetchError;
+
+--- line 1522 ---
+1520: 
+1521: exports.ChatSession = ChatSession;
+1522: exports.GenerativeModel = GenerativeModel;
+1523: exports.GoogleGenerativeAI = GoogleGenerativeAI;
+1524: exports.GoogleGenerativeAIAbortError = GoogleGenerativeAIAbortError;
+1525: exports.GoogleGenerativeAIError = GoogleGenerativeAIError;
+1526: exports.GoogleGenerativeAIFetchError = GoogleGenerativeAIFetchError;
+
+--- line 1523 ---
+1521: exports.ChatSession = ChatSession;
+1522: exports.GenerativeModel = GenerativeModel;
+1523: exports.GoogleGenerativeAI = GoogleGenerativeAI;
+1524: exports.GoogleGenerativeAIAbortError = GoogleGenerativeAIAbortError;
+1525: exports.GoogleGenerativeAIError = GoogleGenerativeAIError;
+1526: exports.GoogleGenerativeAIFetchError = GoogleGenerativeAIFetchError;
+1527: exports.GoogleGenerativeAIRequestInputError = GoogleGenerativeAIRequestInputError;
+
+--- line 1523 ---
+1521: exports.ChatSession = ChatSession;
+1522: exports.GenerativeModel = GenerativeModel;
+1523: exports.GoogleGenerativeAI = GoogleGenerativeAI;
+1524: exports.GoogleGenerativeAIAbortError = GoogleGenerativeAIAbortError;
+1525: exports.GoogleGenerativeAIError = GoogleGenerativeAIError;
+1526: exports.GoogleGenerativeAIFetchError = GoogleGenerativeAIFetchError;
+1527: exports.GoogleGenerativeAIRequestInputError = GoogleGenerativeAIRequestInputError;
+
+--- line 1524 ---
+1522: exports.GenerativeModel = GenerativeModel;
+1523: exports.GoogleGenerativeAI = GoogleGenerativeAI;
+1524: exports.GoogleGenerativeAIAbortError = GoogleGenerativeAIAbortError;
+1525: exports.GoogleGenerativeAIError = GoogleGenerativeAIError;
+1526: exports.GoogleGenerativeAIFetchError = GoogleGenerativeAIFetchError;
+1527: exports.GoogleGenerativeAIRequestInputError = GoogleGenerativeAIRequestInputError;
+1528: exports.GoogleGenerativeAIResponseError = GoogleGenerativeAIResponseError;
+
+--- line 1524 ---
+1522: exports.GenerativeModel = GenerativeModel;
+1523: exports.GoogleGenerativeAI = GoogleGenerativeAI;
+1524: exports.GoogleGenerativeAIAbortError = GoogleGenerativeAIAbortError;
+1525: exports.GoogleGenerativeAIError = GoogleGenerativeAIError;
+1526: exports.GoogleGenerativeAIFetchError = GoogleGenerativeAIFetchError;
+1527: exports.GoogleGenerativeAIRequestInputError = GoogleGenerativeAIRequestInputError;
+1528: exports.GoogleGenerativeAIResponseError = GoogleGenerativeAIResponseError;
+
+--- line 1525 ---
+1523: exports.GoogleGenerativeAI = GoogleGenerativeAI;
+1524: exports.GoogleGenerativeAIAbortError = GoogleGenerativeAIAbortError;
+1525: exports.GoogleGenerativeAIError = GoogleGenerativeAIError;
+1526: exports.GoogleGenerativeAIFetchError = GoogleGenerativeAIFetchError;
+1527: exports.GoogleGenerativeAIRequestInputError = GoogleGenerativeAIRequestInputError;
+1528: exports.GoogleGenerativeAIResponseError = GoogleGenerativeAIResponseError;
+1529: exports.POSSIBLE_ROLES = POSSIBLE_ROLES;
+
+--- line 1525 ---
+1523: exports.GoogleGenerativeAI = GoogleGenerativeAI;
+1524: exports.GoogleGenerativeAIAbortError = GoogleGenerativeAIAbortError;
+1525: exports.GoogleGenerativeAIError = GoogleGenerativeAIError;
+1526: exports.GoogleGenerativeAIFetchError = GoogleGenerativeAIFetchError;
+1527: exports.GoogleGenerativeAIRequestInputError = GoogleGenerativeAIRequestInputError;
+1528: exports.GoogleGenerativeAIResponseError = GoogleGenerativeAIResponseError;
+1529: exports.POSSIBLE_ROLES = POSSIBLE_ROLES;
+
+--- line 1526 ---
+1524: exports.GoogleGenerativeAIAbortError = GoogleGenerativeAIAbortError;
+1525: exports.GoogleGenerativeAIError = GoogleGenerativeAIError;
+1526: exports.GoogleGenerativeAIFetchError = GoogleGenerativeAIFetchError;
+1527: exports.GoogleGenerativeAIRequestInputError = GoogleGenerativeAIRequestInputError;
+1528: exports.GoogleGenerativeAIResponseError = GoogleGenerativeAIResponseError;
+1529: exports.POSSIBLE_ROLES = POSSIBLE_ROLES;
+1530: //# sourceMappingURL=index.js.map
+
+--- line 1526 ---
+1524: exports.GoogleGenerativeAIAbortError = GoogleGenerativeAIAbortError;
+1525: exports.GoogleGenerativeAIError = GoogleGenerativeAIError;
+1526: exports.GoogleGenerativeAIFetchError = GoogleGenerativeAIFetchError;
+1527: exports.GoogleGenerativeAIRequestInputError = GoogleGenerativeAIRequestInputError;
+1528: exports.GoogleGenerativeAIResponseError = GoogleGenerativeAIResponseError;
+1529: exports.POSSIBLE_ROLES = POSSIBLE_ROLES;
+1530: //# sourceMappingURL=index.js.map
+
+--- line 1527 ---
+1525: exports.GoogleGenerativeAIError = GoogleGenerativeAIError;
+1526: exports.GoogleGenerativeAIFetchError = GoogleGenerativeAIFetchError;
+1527: exports.GoogleGenerativeAIRequestInputError = GoogleGenerativeAIRequestInputError;
+1528: exports.GoogleGenerativeAIResponseError = GoogleGenerativeAIResponseError;
+1529: exports.POSSIBLE_ROLES = POSSIBLE_ROLES;
+1530: //# sourceMappingURL=index.js.map
+1531: 
+
+--- line 1527 ---
+1525: exports.GoogleGenerativeAIError = GoogleGenerativeAIError;
+1526: exports.GoogleGenerativeAIFetchError = GoogleGenerativeAIFetchError;
+1527: exports.GoogleGenerativeAIRequestInputError = GoogleGenerativeAIRequestInputError;
+1528: exports.GoogleGenerativeAIResponseError = GoogleGenerativeAIResponseError;
+1529: exports.POSSIBLE_ROLES = POSSIBLE_ROLES;
+1530: //# sourceMappingURL=index.js.map
+1531: 
+
+--- line 1528 ---
+1526: exports.GoogleGenerativeAIFetchError = GoogleGenerativeAIFetchError;
+1527: exports.GoogleGenerativeAIRequestInputError = GoogleGenerativeAIRequestInputError;
+1528: exports.GoogleGenerativeAIResponseError = GoogleGenerativeAIResponseError;
+1529: exports.POSSIBLE_ROLES = POSSIBLE_ROLES;
+1530: //# sourceMappingURL=index.js.map
+1531: 
+
+--- line 1528 ---
+1526: exports.GoogleGenerativeAIFetchError = GoogleGenerativeAIFetchError;
+1527: exports.GoogleGenerativeAIRequestInputError = GoogleGenerativeAIRequestInputError;
+1528: exports.GoogleGenerativeAIResponseError = GoogleGenerativeAIResponseError;
+1529: exports.POSSIBLE_ROLES = POSSIBLE_ROLES;
+1530: //# sourceMappingURL=index.js.map
+1531: 
+
+

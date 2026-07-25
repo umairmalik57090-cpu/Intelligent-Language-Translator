@@ -1,0 +1,111 @@
+﻿}
+
+/**
+ * Request sent to `generateContent` endpoint.
+ * @public
+ */
+export declare interface GenerateContentRequest extends BaseParams {
+    contents: Content[];
+    tools?: Tool[];
+    toolConfig?: ToolConfig;
+    systemInstruction?: string | Part | Content;
+    /**
+     * This is the name of a `CachedContent` and not the cache object itself.
+     */
+    cachedContent?: string;
+}
+
+/**
+ * Request sent to `generateContent` endpoint.
+ * @internal
+ */
+export declare interface _GenerateContentRequestInternal extends GenerateContentRequest {
+    model?: string;
+}
+
+/**
+ * Individual response from {@link GenerativeModel.generateContent} and
+ * {@link GenerativeModel.generateContentStream}.
+ * `generateContentStream()` will return one in each chunk until
+ * the stream is done.
+ * @public
+ */
+export declare interface GenerateContentResponse {
+    /** Candidate responses from the model. */
+    candidates?: GenerateContentCandidate[];
+    /** The prompt's feedback related to the content filters. */
+    promptFeedback?: PromptFeedback;
+    /** Metadata on the generation request's token usage. */
+    usageMetadata?: UsageMetadata;
+}
+
+/**
+ * Result object returned from generateContent() call.
+ *
+ * @public
+ */
+export declare interface GenerateContentResult {
+    response: EnhancedGenerateContentResponse;
+}
+
+/**
+ * Result object returned from generateContentStream() call.
+ * Iterate over `stream` to get chunks as they come in and/or
+ * use the `response` promise to get the aggregated response when
+ * the stream is done.
+ *
+ * @public
+ */
+export declare interface GenerateContentStreamResult {
+    stream: AsyncGenerator<EnhancedGenerateContentResponse>;
+    response: Promise<EnhancedGenerateContentResponse>;
+}
+
+/**
+ * Config options for content-related requests
+ * @public
+ */
+export declare interface GenerationConfig {
+    candidateCount?: number;
+    stopSequences?: string[];
+    maxOutputTokens?: number;
+    temperature?: number;
+    topP?: number;
+    topK?: number;
+    /**
+     * Output response mimetype of the generated candidate text.
+     * Supported mimetype:
+     *   `text/plain`: (default) Text output.
+     *   `application/json`: JSON response in the candidates.
+     */
+    responseMimeType?: string;
+    /**
+     * Output response schema of the generated candidate text.
+     * Note: This only applies when the specified `responseMIMEType` supports a schema; currently
+     * this is limited to `application/json`.
+     */
+    responseSchema?: ResponseSchema;
+    /**
+     * Presence penalty applied to the next token's logprobs if the token has
+     * already been seen in the response.
+     */
+    presencePenalty?: number;
+    /**
+     * Frequency penalty applied to the next token's logprobs, multiplied by the
+     * number of times each token has been seen in the respponse so far.
+     */
+    frequencyPenalty?: number;
+    /**
+     * If True, export the logprobs results in response.
+     */
+    responseLogprobs?: boolean;
+    /**
+     * Valid if responseLogProbs is set to True. This will set the number of top
+     * logprobs to return at each decoding step in the logprobsResult.
+     */
+    logprobs?: number;
+}
+
+/**
+ * Interface for sending an image.
+ * @public

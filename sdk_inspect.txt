@@ -1,0 +1,717 @@
+0242:  * limitations under the License.
+0243:  */
+0244: /**
+0245:  * Basic error type for this SDK.
+0246:  * @public
+0247:  */
+0248: class GoogleGenerativeAIError extends Error {
+0249:     constructor(message) {
+0250:         super(`[GoogleGenerativeAI Error]: ${message}`);
+0251:     }
+0252: }
+0253: /**
+0254:  * Errors in the contents of a response from the model. This includes parsing
+0255:  * errors, or responses including a safety block reason.
+0256:  * @public
+0257:  */
+0258: class GoogleGenerativeAIResponseError extends GoogleGenerativeAIError {
+0259:     constructor(message, response) {
+0260:         super(message);
+0261:         this.response = response;
+0262:     }
+0263: }
+0264: /**
+0265:  * Error class covering HTTP errors when calling the server. Includes HTTP
+0266:  * status, statusText, and optional details, if provided in the server response.
+0267:  * @public
+0268:  */
+-----
+0243:  */
+0244: /**
+0245:  * Basic error type for this SDK.
+0246:  * @public
+0247:  */
+0248: class GoogleGenerativeAIError extends Error {
+0249:     constructor(message) {
+0250:         super(`[GoogleGenerativeAI Error]: ${message}`);
+0251:     }
+0252: }
+0253: /**
+0254:  * Errors in the contents of a response from the model. This includes parsing
+0255:  * errors, or responses including a safety block reason.
+0256:  * @public
+0257:  */
+0258: class GoogleGenerativeAIResponseError extends GoogleGenerativeAIError {
+0259:     constructor(message, response) {
+0260:         super(message);
+0261:         this.response = response;
+0262:     }
+0263: }
+0264: /**
+0265:  * Error class covering HTTP errors when calling the server. Includes HTTP
+0266:  * status, statusText, and optional details, if provided in the server response.
+0267:  * @public
+0268:  */
+0269: class GoogleGenerativeAIFetchError extends GoogleGenerativeAIError {
+-----
+0252: }
+0253: /**
+0254:  * Errors in the contents of a response from the model. This includes parsing
+0255:  * errors, or responses including a safety block reason.
+0256:  * @public
+0257:  */
+0258: class GoogleGenerativeAIResponseError extends GoogleGenerativeAIError {
+0259:     constructor(message, response) {
+0260:         super(message);
+0261:         this.response = response;
+0262:     }
+0263: }
+0264: /**
+0265:  * Error class covering HTTP errors when calling the server. Includes HTTP
+0266:  * status, statusText, and optional details, if provided in the server response.
+0267:  * @public
+0268:  */
+0269: class GoogleGenerativeAIFetchError extends GoogleGenerativeAIError {
+0270:     constructor(message, status, statusText, errorDetails) {
+0271:         super(message);
+0272:         this.status = status;
+0273:         this.statusText = statusText;
+0274:         this.errorDetails = errorDetails;
+0275:     }
+0276: }
+0277: /**
+0278:  * Errors in the contents of a request originating from user input.
+-----
+0253: /**
+0254:  * Errors in the contents of a response from the model. This includes parsing
+0255:  * errors, or responses including a safety block reason.
+0256:  * @public
+0257:  */
+0258: class GoogleGenerativeAIResponseError extends GoogleGenerativeAIError {
+0259:     constructor(message, response) {
+0260:         super(message);
+0261:         this.response = response;
+0262:     }
+0263: }
+0264: /**
+0265:  * Error class covering HTTP errors when calling the server. Includes HTTP
+0266:  * status, statusText, and optional details, if provided in the server response.
+0267:  * @public
+0268:  */
+0269: class GoogleGenerativeAIFetchError extends GoogleGenerativeAIError {
+0270:     constructor(message, status, statusText, errorDetails) {
+0271:         super(message);
+0272:         this.status = status;
+0273:         this.statusText = statusText;
+0274:         this.errorDetails = errorDetails;
+0275:     }
+0276: }
+0277: /**
+0278:  * Errors in the contents of a request originating from user input.
+0279:  * @public
+-----
+0263: }
+0264: /**
+0265:  * Error class covering HTTP errors when calling the server. Includes HTTP
+0266:  * status, statusText, and optional details, if provided in the server response.
+0267:  * @public
+0268:  */
+0269: class GoogleGenerativeAIFetchError extends GoogleGenerativeAIError {
+0270:     constructor(message, status, statusText, errorDetails) {
+0271:         super(message);
+0272:         this.status = status;
+0273:         this.statusText = statusText;
+0274:         this.errorDetails = errorDetails;
+0275:     }
+0276: }
+0277: /**
+0278:  * Errors in the contents of a request originating from user input.
+0279:  * @public
+0280:  */
+0281: class GoogleGenerativeAIRequestInputError extends GoogleGenerativeAIError {
+0282: }
+0283: /**
+0284:  * Error thrown when a request is aborted, either due to a timeout or
+0285:  * intentional cancellation by the user.
+0286:  * @public
+0287:  */
+0288: class GoogleGenerativeAIAbortError extends GoogleGenerativeAIError {
+0289: }
+-----
+0264: /**
+0265:  * Error class covering HTTP errors when calling the server. Includes HTTP
+0266:  * status, statusText, and optional details, if provided in the server response.
+0267:  * @public
+0268:  */
+0269: class GoogleGenerativeAIFetchError extends GoogleGenerativeAIError {
+0270:     constructor(message, status, statusText, errorDetails) {
+0271:         super(message);
+0272:         this.status = status;
+0273:         this.statusText = statusText;
+0274:         this.errorDetails = errorDetails;
+0275:     }
+0276: }
+0277: /**
+0278:  * Errors in the contents of a request originating from user input.
+0279:  * @public
+0280:  */
+0281: class GoogleGenerativeAIRequestInputError extends GoogleGenerativeAIError {
+0282: }
+0283: /**
+0284:  * Error thrown when a request is aborted, either due to a timeout or
+0285:  * intentional cancellation by the user.
+0286:  * @public
+0287:  */
+0288: class GoogleGenerativeAIAbortError extends GoogleGenerativeAIError {
+0289: }
+0290: 
+-----
+0275:     }
+0276: }
+0277: /**
+0278:  * Errors in the contents of a request originating from user input.
+0279:  * @public
+0280:  */
+0281: class GoogleGenerativeAIRequestInputError extends GoogleGenerativeAIError {
+0282: }
+0283: /**
+0284:  * Error thrown when a request is aborted, either due to a timeout or
+0285:  * intentional cancellation by the user.
+0286:  * @public
+0287:  */
+0288: class GoogleGenerativeAIAbortError extends GoogleGenerativeAIError {
+0289: }
+0290: 
+0291: /**
+0292:  * @license
+0293:  * Copyright 2024 Google LLC
+0294:  *
+0295:  * Licensed under the Apache License, Version 2.0 (the "License");
+0296:  * you may not use this file except in compliance with the License.
+0297:  * You may obtain a copy of the License at
+0298:  *
+0299:  *   http://www.apache.org/licenses/LICENSE-2.0
+0300:  *
+0301:  * Unless required by applicable law or agreed to in writing, software
+-----
+0282: }
+0283: /**
+0284:  * Error thrown when a request is aborted, either due to a timeout or
+0285:  * intentional cancellation by the user.
+0286:  * @public
+0287:  */
+0288: class GoogleGenerativeAIAbortError extends GoogleGenerativeAIError {
+0289: }
+0290: 
+0291: /**
+0292:  * @license
+0293:  * Copyright 2024 Google LLC
+0294:  *
+0295:  * Licensed under the Apache License, Version 2.0 (the "License");
+0296:  * you may not use this file except in compliance with the License.
+0297:  * You may obtain a copy of the License at
+0298:  *
+0299:  *   http://www.apache.org/licenses/LICENSE-2.0
+0300:  *
+0301:  * Unless required by applicable law or agreed to in writing, software
+0302:  * distributed under the License is distributed on an "AS IS" BASIS,
+0303:  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+0304:  * See the License for the specific language governing permissions and
+0305:  * limitations under the License.
+0306:  */
+0307: const DEFAULT_BASE_URL = "https://generativelanguage.googleapis.com";
+0308: const DEFAULT_API_VERSION = "v1beta";
+-----
+0318:     Task["STREAM_GENERATE_CONTENT"] = "streamGenerateContent";
+0319:     Task["COUNT_TOKENS"] = "countTokens";
+0320:     Task["EMBED_CONTENT"] = "embedContent";
+0321:     Task["BATCH_EMBED_CONTENTS"] = "batchEmbedContents";
+0322: })(Task || (Task = {}));
+0323: class RequestUrl {
+0324:     constructor(model, task, apiKey, stream, requestOptions) {
+0325:         this.model = model;
+0326:         this.task = task;
+0327:         this.apiKey = apiKey;
+0328:         this.stream = stream;
+0329:         this.requestOptions = requestOptions;
+0330:     }
+0331:     toString() {
+0332:         var _a, _b;
+0333:         const apiVersion = ((_a = this.requestOptions) === null || _a === void 0 ? void 0 : _a.apiVersion) || DEFAULT_API_VERSION;
+0334:         const baseUrl = ((_b = this.requestOptions) === null || _b === void 0 ? void 0 : _b.baseUrl) || DEFAULT_BASE_URL;
+0335:         let url = `${baseUrl}/${apiVersion}/${this.model}:${this.task}`;
+0336:         if (this.stream) {
+0337:             url += "?alt=sse";
+0338:         }
+0339:         return url;
+0340:     }
+0341: }
+0342: /**
+0343:  * Simple, but may become more complex if we add more versions to log.
+0344:  */
+-----
+0319:     Task["COUNT_TOKENS"] = "countTokens";
+0320:     Task["EMBED_CONTENT"] = "embedContent";
+0321:     Task["BATCH_EMBED_CONTENTS"] = "batchEmbedContents";
+0322: })(Task || (Task = {}));
+0323: class RequestUrl {
+0324:     constructor(model, task, apiKey, stream, requestOptions) {
+0325:         this.model = model;
+0326:         this.task = task;
+0327:         this.apiKey = apiKey;
+0328:         this.stream = stream;
+0329:         this.requestOptions = requestOptions;
+0330:     }
+0331:     toString() {
+0332:         var _a, _b;
+0333:         const apiVersion = ((_a = this.requestOptions) === null || _a === void 0 ? void 0 : _a.apiVersion) || DEFAULT_API_VERSION;
+0334:         const baseUrl = ((_b = this.requestOptions) === null || _b === void 0 ? void 0 : _b.baseUrl) || DEFAULT_BASE_URL;
+0335:         let url = `${baseUrl}/${apiVersion}/${this.model}:${this.task}`;
+0336:         if (this.stream) {
+0337:             url += "?alt=sse";
+0338:         }
+0339:         return url;
+0340:     }
+0341: }
+0342: /**
+0343:  * Simple, but may become more complex if we add more versions to log.
+0344:  */
+0345: function getClientHeaders(requestOptions) {
+-----
+0860:  */
+0861: async function generateContentStream(apiKey, model, params, requestOptions) {
+0862:     const response = await makeModelRequest(model, Task.STREAM_GENERATE_CONTENT, apiKey, 
+0863:     /* stream */ true, JSON.stringify(params), requestOptions);
+0864:     return processStream(response);
+0865: }
+0866: async function generateContent(apiKey, model, params, requestOptions) {
+0867:     const response = await makeModelRequest(model, Task.GENERATE_CONTENT, apiKey, 
+0868:     /* stream */ false, JSON.stringify(params), requestOptions);
+0869:     const responseJson = await response.json();
+0870:     const enhancedResponse = addHelpers(responseJson);
+0871:     return {
+0872:         response: enhancedResponse,
+0873:     };
+0874: }
+0875: 
+0876: /**
+0877:  * @license
+0878:  * Copyright 2024 Google LLC
+0879:  *
+0880:  * Licensed under the Apache License, Version 2.0 (the "License");
+0881:  * you may not use this file except in compliance with the License.
+0882:  * You may obtain a copy of the License at
+0883:  *
+0884:  *   http://www.apache.org/licenses/LICENSE-2.0
+0885:  *
+0886:  * Unless required by applicable law or agreed to in writing, software
+-----
+1135:  * ChatSession class that enables sending chat messages and stores
+1136:  * history of sent and received messages so far.
+1137:  *
+1138:  * @public
+1139:  */
+1140: class ChatSession {
+1141:     constructor(apiKey, model, params, _requestOptions = {}) {
+1142:         this.model = model;
+1143:         this.params = params;
+1144:         this._requestOptions = _requestOptions;
+1145:         this._history = [];
+1146:         this._sendPromise = Promise.resolve();
+1147:         this._apiKey = apiKey;
+1148:         if (params === null || params === void 0 ? void 0 : params.history) {
+1149:             validateChatHistory(params.history);
+1150:             this._history = params.history;
+1151:         }
+1152:     }
+1153:     /**
+1154:      * Gets the chat history so far. Blocked prompts are not added to history.
+1155:      * Blocked candidates are not added to history, nor are the prompts that
+1156:      * generated them.
+1157:      */
+1158:     async getHistory() {
+1159:         await this._sendPromise;
+1160:         return this._history;
+1161:     }
+-----
+1136:  * history of sent and received messages so far.
+1137:  *
+1138:  * @public
+1139:  */
+1140: class ChatSession {
+1141:     constructor(apiKey, model, params, _requestOptions = {}) {
+1142:         this.model = model;
+1143:         this.params = params;
+1144:         this._requestOptions = _requestOptions;
+1145:         this._history = [];
+1146:         this._sendPromise = Promise.resolve();
+1147:         this._apiKey = apiKey;
+1148:         if (params === null || params === void 0 ? void 0 : params.history) {
+1149:             validateChatHistory(params.history);
+1150:             this._history = params.history;
+1151:         }
+1152:     }
+1153:     /**
+1154:      * Gets the chat history so far. Blocked prompts are not added to history.
+1155:      * Blocked candidates are not added to history, nor are the prompts that
+1156:      * generated them.
+1157:      */
+1158:     async getHistory() {
+1159:         await this._sendPromise;
+1160:         return this._history;
+1161:     }
+1162:     /**
+-----
+1181:             contents: [...this._history, newContent],
+1182:         };
+1183:         const chatSessionRequestOptions = Object.assign(Object.assign({}, this._requestOptions), requestOptions);
+1184:         let finalResult;
+1185:         // Add onto the chain.
+1186:         this._sendPromise = this._sendPromise
+1187:             .then(() => generateContent(this._apiKey, this.model, generateContentRequest, chatSessionRequestOptions))
+1188:             .then((result) => {
+1189:             var _a;
+1190:             if (isValidResponse(result.response)) {
+1191:                 this._history.push(newContent);
+1192:                 const responseContent = Object.assign({ parts: [], 
+1193:                     // Response seems to come back without a role set.
+1194:                     role: "model" }, (_a = result.response.candidates) === null || _a === void 0 ? void 0 : _a[0].content);
+1195:                 this._history.push(responseContent);
+1196:             }
+1197:             else {
+1198:                 const blockErrorMessage = formatBlockErrorMessage(result.response);
+1199:                 if (blockErrorMessage) {
+1200:                     console.warn(`sendMessage() was unsuccessful. ${blockErrorMessage}. Inspect response object for details.`);
+1201:                 }
+1202:             }
+1203:             finalResult = result;
+1204:         })
+1205:             .catch((e) => {
+1206:             // Resets _sendPromise to avoid subsequent calls failing and throw error.
+1207:             this._sendPromise = Promise.resolve();
+-----
+1313:  */
+1314: async function embedContent(apiKey, model, params, requestOptions) {
+1315:     const response = await makeModelRequest(model, Task.EMBED_CONTENT, apiKey, false, JSON.stringify(params), requestOptions);
+1316:     return response.json();
+1317: }
+1318: async function batchEmbedContents(apiKey, model, params, requestOptions) {
+1319:     const requestsWithModel = params.requests.map((request) => {
+1320:         return Object.assign(Object.assign({}, request), { model });
+1321:     });
+1322:     const response = await makeModelRequest(model, Task.BATCH_EMBED_CONTENTS, apiKey, false, JSON.stringify({ requests: requestsWithModel }), requestOptions);
+1323:     return response.json();
+1324: }
+1325: 
+1326: /**
+1327:  * @license
+1328:  * Copyright 2024 Google LLC
+1329:  *
+1330:  * Licensed under the Apache License, Version 2.0 (the "License");
+1331:  * you may not use this file except in compliance with the License.
+1332:  * You may obtain a copy of the License at
+1333:  *
+1334:  *   http://www.apache.org/licenses/LICENSE-2.0
+1335:  *
+1336:  * Unless required by applicable law or agreed to in writing, software
+1337:  * distributed under the License is distributed on an "AS IS" BASIS,
+1338:  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+1339:  * See the License for the specific language governing permissions and
+-----
+1341:  */
+1342: /**
+1343:  * Class for generative model APIs.
+1344:  * @public
+1345:  */
+1346: class GenerativeModel {
+1347:     constructor(apiKey, modelParams, _requestOptions = {}) {
+1348:         this.apiKey = apiKey;
+1349:         this._requestOptions = _requestOptions;
+1350:         if (modelParams.model.includes("/")) {
+1351:             // Models may be named "models/model-name" or "tunedModels/model-name"
+1352:             this.model = modelParams.model;
+1353:         }
+1354:         else {
+1355:             // If path is not included, assume it's a non-tuned model.
+1356:             this.model = `models/${modelParams.model}`;
+1357:         }
+1358:         this.generationConfig = modelParams.generationConfig || {};
+1359:         this.safetySettings = modelParams.safetySettings || [];
+1360:         this.tools = modelParams.tools;
+1361:         this.toolConfig = modelParams.toolConfig;
+1362:         this.systemInstruction = formatSystemInstruction(modelParams.systemInstruction);
+1363:         this.cachedContent = modelParams.cachedContent;
+1364:     }
+1365:     /**
+1366:      * Makes a single non-streaming call to the model
+1367:      * and returns an object containing a single {@link GenerateContentResponse}.
+-----
+1346: class GenerativeModel {
+1347:     constructor(apiKey, modelParams, _requestOptions = {}) {
+1348:         this.apiKey = apiKey;
+1349:         this._requestOptions = _requestOptions;
+1350:         if (modelParams.model.includes("/")) {
+1351:             // Models may be named "models/model-name" or "tunedModels/model-name"
+1352:             this.model = modelParams.model;
+1353:         }
+1354:         else {
+1355:             // If path is not included, assume it's a non-tuned model.
+1356:             this.model = `models/${modelParams.model}`;
+1357:         }
+1358:         this.generationConfig = modelParams.generationConfig || {};
+1359:         this.safetySettings = modelParams.safetySettings || [];
+1360:         this.tools = modelParams.tools;
+1361:         this.toolConfig = modelParams.toolConfig;
+1362:         this.systemInstruction = formatSystemInstruction(modelParams.systemInstruction);
+1363:         this.cachedContent = modelParams.cachedContent;
+1364:     }
+1365:     /**
+1366:      * Makes a single non-streaming call to the model
+1367:      * and returns an object containing a single {@link GenerateContentResponse}.
+1368:      *
+1369:      * Fields set in the optional {@link SingleRequestOptions} parameter will
+1370:      * take precedence over the {@link RequestOptions} values provided to
+1371:      * {@link GoogleGenerativeAI.getGenerativeModel }.
+1372:      */
+-----
+1350:         if (modelParams.model.includes("/")) {
+1351:             // Models may be named "models/model-name" or "tunedModels/model-name"
+1352:             this.model = modelParams.model;
+1353:         }
+1354:         else {
+1355:             // If path is not included, assume it's a non-tuned model.
+1356:             this.model = `models/${modelParams.model}`;
+1357:         }
+1358:         this.generationConfig = modelParams.generationConfig || {};
+1359:         this.safetySettings = modelParams.safetySettings || [];
+1360:         this.tools = modelParams.tools;
+1361:         this.toolConfig = modelParams.toolConfig;
+1362:         this.systemInstruction = formatSystemInstruction(modelParams.systemInstruction);
+1363:         this.cachedContent = modelParams.cachedContent;
+1364:     }
+1365:     /**
+1366:      * Makes a single non-streaming call to the model
+1367:      * and returns an object containing a single {@link GenerateContentResponse}.
+1368:      *
+1369:      * Fields set in the optional {@link SingleRequestOptions} parameter will
+1370:      * take precedence over the {@link RequestOptions} values provided to
+1371:      * {@link GoogleGenerativeAI.getGenerativeModel }.
+1372:      */
+1373:     async generateContent(request, requestOptions = {}) {
+1374:         var _a;
+1375:         const formattedParams = formatGenerateContentInput(request);
+1376:         const generativeModelRequestOptions = Object.assign(Object.assign({}, this._requestOptions), requestOptions);
+-----
+1367:      * and returns an object containing a single {@link GenerateContentResponse}.
+1368:      *
+1369:      * Fields set in the optional {@link SingleRequestOptions} parameter will
+1370:      * take precedence over the {@link RequestOptions} values provided to
+1371:      * {@link GoogleGenerativeAI.getGenerativeModel }.
+1372:      */
+1373:     async generateContent(request, requestOptions = {}) {
+1374:         var _a;
+1375:         const formattedParams = formatGenerateContentInput(request);
+1376:         const generativeModelRequestOptions = Object.assign(Object.assign({}, this._requestOptions), requestOptions);
+1377:         return generateContent(this.apiKey, this.model, Object.assign({ generationConfig: this.generationConfig, safetySettings: this.safetySettings, tools: this.tools, toolConfig: this.toolConfig, systemInstruction: this.systemInstruction, cachedContent: (_a = this.cachedContent) === null || _a === void 0 ? void 0 : _a.name }, formattedParams), generativeModelRequestOptions);
+1378:     }
+1379:     /**
+1380:      * Makes a single streaming call to the model and returns an object
+1381:      * containing an iterable stream that iterates over all chunks in the
+1382:      * streaming response as well as a promise that returns the final
+1383:      * aggregated response.
+1384:      *
+1385:      * Fields set in the optional {@link SingleRequestOptions} parameter will
+1386:      * take precedence over the {@link RequestOptions} values provided to
+1387:      * {@link GoogleGenerativeAI.getGenerativeModel }.
+1388:      */
+1389:     async generateContentStream(request, requestOptions = {}) {
+1390:         var _a;
+1391:         const formattedParams = formatGenerateContentInput(request);
+1392:         const generativeModelRequestOptions = Object.assign(Object.assign({}, this._requestOptions), requestOptions);
+1393:         return generateContentStream(this.apiKey, this.model, Object.assign({ generationConfig: this.generationConfig, safetySettings: this.safetySettings, tools: this.tools, toolConfig: this.toolConfig, systemInstruction: this.systemInstruction, cachedContent: (_a = this.cachedContent) === null || _a === void 0 ? void 0 : _a.name }, formattedParams), generativeModelRequestOptions);
+-----
+1371:      * {@link GoogleGenerativeAI.getGenerativeModel }.
+1372:      */
+1373:     async generateContent(request, requestOptions = {}) {
+1374:         var _a;
+1375:         const formattedParams = formatGenerateContentInput(request);
+1376:         const generativeModelRequestOptions = Object.assign(Object.assign({}, this._requestOptions), requestOptions);
+1377:         return generateContent(this.apiKey, this.model, Object.assign({ generationConfig: this.generationConfig, safetySettings: this.safetySettings, tools: this.tools, toolConfig: this.toolConfig, systemInstruction: this.systemInstruction, cachedContent: (_a = this.cachedContent) === null || _a === void 0 ? void 0 : _a.name }, formattedParams), generativeModelRequestOptions);
+1378:     }
+1379:     /**
+1380:      * Makes a single streaming call to the model and returns an object
+1381:      * containing an iterable stream that iterates over all chunks in the
+1382:      * streaming response as well as a promise that returns the final
+1383:      * aggregated response.
+1384:      *
+1385:      * Fields set in the optional {@link SingleRequestOptions} parameter will
+1386:      * take precedence over the {@link RequestOptions} values provided to
+1387:      * {@link GoogleGenerativeAI.getGenerativeModel }.
+1388:      */
+1389:     async generateContentStream(request, requestOptions = {}) {
+1390:         var _a;
+1391:         const formattedParams = formatGenerateContentInput(request);
+1392:         const generativeModelRequestOptions = Object.assign(Object.assign({}, this._requestOptions), requestOptions);
+1393:         return generateContentStream(this.apiKey, this.model, Object.assign({ generationConfig: this.generationConfig, safetySettings: this.safetySettings, tools: this.tools, toolConfig: this.toolConfig, systemInstruction: this.systemInstruction, cachedContent: (_a = this.cachedContent) === null || _a === void 0 ? void 0 : _a.name }, formattedParams), generativeModelRequestOptions);
+1394:     }
+1395:     /**
+1396:      * Gets a new {@link ChatSession} instance which can be used for
+1397:      * multi-turn chats.
+-----
+1462:  * limitations under the License.
+1463:  */
+1464: /**
+1465:  * Top-level class for this SDK
+1466:  * @public
+1467:  */
+1468: class GoogleGenerativeAI {
+1469:     constructor(apiKey) {
+1470:         this.apiKey = apiKey;
+1471:     }
+1472:     /**
+1473:      * Gets a {@link GenerativeModel} instance for the provided model name.
+1474:      */
+1475:     getGenerativeModel(modelParams, requestOptions) {
+1476:         if (!modelParams.model) {
+1477:             throw new GoogleGenerativeAIError(`Must provide a model name. ` +
+1478:                 `Example: genai.getGenerativeModel({ model: 'my-model-name' })`);
+1479:         }
+1480:         return new GenerativeModel(this.apiKey, modelParams, requestOptions);
+1481:     }
+1482:     /**
+1483:      * Creates a {@link GenerativeModel} instance from provided content cache.
+1484:      */
+1485:     getGenerativeModelFromCachedContent(cachedContent, modelParams, requestOptions) {
+1486:         if (!cachedContent.name) {
+1487:             throw new GoogleGenerativeAIRequestInputError("Cached content must contain a `name` field.");
+1488:         }
+-----
+1463:  */
+1464: /**
+1465:  * Top-level class for this SDK
+1466:  * @public
+1467:  */
+1468: class GoogleGenerativeAI {
+1469:     constructor(apiKey) {
+1470:         this.apiKey = apiKey;
+1471:     }
+1472:     /**
+1473:      * Gets a {@link GenerativeModel} instance for the provided model name.
+1474:      */
+1475:     getGenerativeModel(modelParams, requestOptions) {
+1476:         if (!modelParams.model) {
+1477:             throw new GoogleGenerativeAIError(`Must provide a model name. ` +
+1478:                 `Example: genai.getGenerativeModel({ model: 'my-model-name' })`);
+1479:         }
+1480:         return new GenerativeModel(this.apiKey, modelParams, requestOptions);
+1481:     }
+1482:     /**
+1483:      * Creates a {@link GenerativeModel} instance from provided content cache.
+1484:      */
+1485:     getGenerativeModelFromCachedContent(cachedContent, modelParams, requestOptions) {
+1486:         if (!cachedContent.name) {
+1487:             throw new GoogleGenerativeAIRequestInputError("Cached content must contain a `name` field.");
+1488:         }
+1489:         if (!cachedContent.model) {
+-----
+1469:     constructor(apiKey) {
+1470:         this.apiKey = apiKey;
+1471:     }
+1472:     /**
+1473:      * Gets a {@link GenerativeModel} instance for the provided model name.
+1474:      */
+1475:     getGenerativeModel(modelParams, requestOptions) {
+1476:         if (!modelParams.model) {
+1477:             throw new GoogleGenerativeAIError(`Must provide a model name. ` +
+1478:                 `Example: genai.getGenerativeModel({ model: 'my-model-name' })`);
+1479:         }
+1480:         return new GenerativeModel(this.apiKey, modelParams, requestOptions);
+1481:     }
+1482:     /**
+1483:      * Creates a {@link GenerativeModel} instance from provided content cache.
+1484:      */
+1485:     getGenerativeModelFromCachedContent(cachedContent, modelParams, requestOptions) {
+1486:         if (!cachedContent.name) {
+1487:             throw new GoogleGenerativeAIRequestInputError("Cached content must contain a `name` field.");
+1488:         }
+1489:         if (!cachedContent.model) {
+1490:             throw new GoogleGenerativeAIRequestInputError("Cached content must contain a `model` field.");
+1491:         }
+1492:         /**
+1493:          * Not checking tools and toolConfig for now as it would require a deep
+1494:          * equality comparison and isn't likely to be a common case.
+1495:          */
+-----
+1472:     /**
+1473:      * Gets a {@link GenerativeModel} instance for the provided model name.
+1474:      */
+1475:     getGenerativeModel(modelParams, requestOptions) {
+1476:         if (!modelParams.model) {
+1477:             throw new GoogleGenerativeAIError(`Must provide a model name. ` +
+1478:                 `Example: genai.getGenerativeModel({ model: 'my-model-name' })`);
+1479:         }
+1480:         return new GenerativeModel(this.apiKey, modelParams, requestOptions);
+1481:     }
+1482:     /**
+1483:      * Creates a {@link GenerativeModel} instance from provided content cache.
+1484:      */
+1485:     getGenerativeModelFromCachedContent(cachedContent, modelParams, requestOptions) {
+1486:         if (!cachedContent.name) {
+1487:             throw new GoogleGenerativeAIRequestInputError("Cached content must contain a `name` field.");
+1488:         }
+1489:         if (!cachedContent.model) {
+1490:             throw new GoogleGenerativeAIRequestInputError("Cached content must contain a `model` field.");
+1491:         }
+1492:         /**
+1493:          * Not checking tools and toolConfig for now as it would require a deep
+1494:          * equality comparison and isn't likely to be a common case.
+1495:          */
+1496:         const disallowedDuplicates = ["model", "systemInstruction"];
+1497:         for (const key of disallowedDuplicates) {
+1498:             if ((modelParams === null || modelParams === void 0 ? void 0 : modelParams[key]) &&
+-----
+1479:         }
+1480:         return new GenerativeModel(this.apiKey, modelParams, requestOptions);
+1481:     }
+1482:     /**
+1483:      * Creates a {@link GenerativeModel} instance from provided content cache.
+1484:      */
+1485:     getGenerativeModelFromCachedContent(cachedContent, modelParams, requestOptions) {
+1486:         if (!cachedContent.name) {
+1487:             throw new GoogleGenerativeAIRequestInputError("Cached content must contain a `name` field.");
+1488:         }
+1489:         if (!cachedContent.model) {
+1490:             throw new GoogleGenerativeAIRequestInputError("Cached content must contain a `model` field.");
+1491:         }
+1492:         /**
+1493:          * Not checking tools and toolConfig for now as it would require a deep
+1494:          * equality comparison and isn't likely to be a common case.
+1495:          */
+1496:         const disallowedDuplicates = ["model", "systemInstruction"];
+1497:         for (const key of disallowedDuplicates) {
+1498:             if ((modelParams === null || modelParams === void 0 ? void 0 : modelParams[key]) &&
+1499:                 cachedContent[key] &&
+1500:                 (modelParams === null || modelParams === void 0 ? void 0 : modelParams[key]) !== cachedContent[key]) {
+1501:                 if (key === "model") {
+1502:                     const modelParamsComp = modelParams.model.startsWith("models/")
+1503:                         ? modelParams.model.replace("models/", "")
+1504:                         : modelParams.model;
+1505:                     const cachedContentComp = cachedContent.model.startsWith("models/")
+-----
+1516:         const modelParamsFromCache = Object.assign(Object.assign({}, modelParams), { model: cachedContent.model, tools: cachedContent.tools, toolConfig: cachedContent.toolConfig, systemInstruction: cachedContent.systemInstruction, cachedContent });
+1517:         return new GenerativeModel(this.apiKey, modelParamsFromCache, requestOptions);
+1518:     }
+1519: }
+1520: 
+1521: exports.ChatSession = ChatSession;
+1522: exports.GenerativeModel = GenerativeModel;
+1523: exports.GoogleGenerativeAI = GoogleGenerativeAI;
+1524: exports.GoogleGenerativeAIAbortError = GoogleGenerativeAIAbortError;
+1525: exports.GoogleGenerativeAIError = GoogleGenerativeAIError;
+1526: exports.GoogleGenerativeAIFetchError = GoogleGenerativeAIFetchError;
+1527: exports.GoogleGenerativeAIRequestInputError = GoogleGenerativeAIRequestInputError;
+1528: exports.GoogleGenerativeAIResponseError = GoogleGenerativeAIResponseError;
+1529: exports.POSSIBLE_ROLES = POSSIBLE_ROLES;
+1530: //# sourceMappingURL=index.js.map
+-----
+

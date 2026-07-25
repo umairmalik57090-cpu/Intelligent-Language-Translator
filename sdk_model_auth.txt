@@ -1,0 +1,1398 @@
+--- line  ---
+0319:     Task["COUNT_TOKENS"] = "countTokens";
+0320:     Task["EMBED_CONTENT"] = "embedContent";
+0321:     Task["BATCH_EMBED_CONTENTS"] = "batchEmbedContents";
+0322: })(Task || (Task = {}));
+0323: class RequestUrl {
+0324:     constructor(model, task, apiKey, stream, requestOptions) {
+0325:         this.model = model;
+0326:         this.task = task;
+0327:         this.apiKey = apiKey;
+0328:         this.stream = stream;
+0329:         this.requestOptions = requestOptions;
+0330:     }
+0331:     toString() {
+0332:         var _a, _b;
+0333:         const apiVersion = ((_a = this.requestOptions) === null || _a === void 0 ? void 0 : _a.apiVersion) || DEFAULT_API_VERSION;
+0334:         const baseUrl = ((_b = this.requestOptions) === null || _b === void 0 ? void 0 : _b.baseUrl) || DEFAULT_BASE_URL;
+0335:         let url = `${baseUrl}/${apiVersion}/${this.model}:${this.task}`;
+0336:         if (this.stream) {
+0337:             url += "?alt=sse";
+0338:         }
+0339:         return url;
+0340:     }
+0341: }
+0342: /**
+0343:  * Simple, but may become more complex if we add more versions to log.
+
+--- line  ---
+0320:     Task["EMBED_CONTENT"] = "embedContent";
+0321:     Task["BATCH_EMBED_CONTENTS"] = "batchEmbedContents";
+0322: })(Task || (Task = {}));
+0323: class RequestUrl {
+0324:     constructor(model, task, apiKey, stream, requestOptions) {
+0325:         this.model = model;
+0326:         this.task = task;
+0327:         this.apiKey = apiKey;
+0328:         this.stream = stream;
+0329:         this.requestOptions = requestOptions;
+0330:     }
+0331:     toString() {
+0332:         var _a, _b;
+0333:         const apiVersion = ((_a = this.requestOptions) === null || _a === void 0 ? void 0 : _a.apiVersion) || DEFAULT_API_VERSION;
+0334:         const baseUrl = ((_b = this.requestOptions) === null || _b === void 0 ? void 0 : _b.baseUrl) || DEFAULT_BASE_URL;
+0335:         let url = `${baseUrl}/${apiVersion}/${this.model}:${this.task}`;
+0336:         if (this.stream) {
+0337:             url += "?alt=sse";
+0338:         }
+0339:         return url;
+0340:     }
+0341: }
+0342: /**
+0343:  * Simple, but may become more complex if we add more versions to log.
+0344:  */
+
+--- line  ---
+0323: class RequestUrl {
+0324:     constructor(model, task, apiKey, stream, requestOptions) {
+0325:         this.model = model;
+0326:         this.task = task;
+0327:         this.apiKey = apiKey;
+0328:         this.stream = stream;
+0329:         this.requestOptions = requestOptions;
+0330:     }
+0331:     toString() {
+0332:         var _a, _b;
+0333:         const apiVersion = ((_a = this.requestOptions) === null || _a === void 0 ? void 0 : _a.apiVersion) || DEFAULT_API_VERSION;
+0334:         const baseUrl = ((_b = this.requestOptions) === null || _b === void 0 ? void 0 : _b.baseUrl) || DEFAULT_BASE_URL;
+0335:         let url = `${baseUrl}/${apiVersion}/${this.model}:${this.task}`;
+0336:         if (this.stream) {
+0337:             url += "?alt=sse";
+0338:         }
+0339:         return url;
+0340:     }
+0341: }
+0342: /**
+0343:  * Simple, but may become more complex if we add more versions to log.
+0344:  */
+0345: function getClientHeaders(requestOptions) {
+0346:     const clientHeaders = [];
+0347:     if (requestOptions === null || requestOptions === void 0 ? void 0 : requestOptions.apiClient) {
+
+--- line  ---
+0341: }
+0342: /**
+0343:  * Simple, but may become more complex if we add more versions to log.
+0344:  */
+0345: function getClientHeaders(requestOptions) {
+0346:     const clientHeaders = [];
+0347:     if (requestOptions === null || requestOptions === void 0 ? void 0 : requestOptions.apiClient) {
+0348:         clientHeaders.push(requestOptions.apiClient);
+0349:     }
+0350:     clientHeaders.push(`${PACKAGE_LOG_HEADER}/${PACKAGE_VERSION}`);
+0351:     return clientHeaders.join(" ");
+0352: }
+0353: async function getHeaders(url) {
+0354:     var _a;
+0355:     const headers = new Headers();
+0356:     headers.append("Content-Type", "application/json");
+0357:     headers.append("x-goog-api-client", getClientHeaders(url.requestOptions));
+0358:     headers.append("x-goog-api-key", url.apiKey);
+0359:     let customHeaders = (_a = url.requestOptions) === null || _a === void 0 ? void 0 : _a.customHeaders;
+0360:     if (customHeaders) {
+0361:         if (!(customHeaders instanceof Headers)) {
+0362:             try {
+0363:                 customHeaders = new Headers(customHeaders);
+0364:             }
+0365:             catch (e) {
+
+--- line  ---
+0342: /**
+0343:  * Simple, but may become more complex if we add more versions to log.
+0344:  */
+0345: function getClientHeaders(requestOptions) {
+0346:     const clientHeaders = [];
+0347:     if (requestOptions === null || requestOptions === void 0 ? void 0 : requestOptions.apiClient) {
+0348:         clientHeaders.push(requestOptions.apiClient);
+0349:     }
+0350:     clientHeaders.push(`${PACKAGE_LOG_HEADER}/${PACKAGE_VERSION}`);
+0351:     return clientHeaders.join(" ");
+0352: }
+0353: async function getHeaders(url) {
+0354:     var _a;
+0355:     const headers = new Headers();
+0356:     headers.append("Content-Type", "application/json");
+0357:     headers.append("x-goog-api-client", getClientHeaders(url.requestOptions));
+0358:     headers.append("x-goog-api-key", url.apiKey);
+0359:     let customHeaders = (_a = url.requestOptions) === null || _a === void 0 ? void 0 : _a.customHeaders;
+0360:     if (customHeaders) {
+0361:         if (!(customHeaders instanceof Headers)) {
+0362:             try {
+0363:                 customHeaders = new Headers(customHeaders);
+0364:             }
+0365:             catch (e) {
+0366:                 throw new GoogleGenerativeAIRequestInputError(`unable to convert customHeaders value ${JSON.stringify(customHeaders)} to Headers: ${e.message}`);
+
+--- line  ---
+0344:  */
+0345: function getClientHeaders(requestOptions) {
+0346:     const clientHeaders = [];
+0347:     if (requestOptions === null || requestOptions === void 0 ? void 0 : requestOptions.apiClient) {
+0348:         clientHeaders.push(requestOptions.apiClient);
+0349:     }
+0350:     clientHeaders.push(`${PACKAGE_LOG_HEADER}/${PACKAGE_VERSION}`);
+0351:     return clientHeaders.join(" ");
+0352: }
+0353: async function getHeaders(url) {
+0354:     var _a;
+0355:     const headers = new Headers();
+0356:     headers.append("Content-Type", "application/json");
+0357:     headers.append("x-goog-api-client", getClientHeaders(url.requestOptions));
+0358:     headers.append("x-goog-api-key", url.apiKey);
+0359:     let customHeaders = (_a = url.requestOptions) === null || _a === void 0 ? void 0 : _a.customHeaders;
+0360:     if (customHeaders) {
+0361:         if (!(customHeaders instanceof Headers)) {
+0362:             try {
+0363:                 customHeaders = new Headers(customHeaders);
+0364:             }
+0365:             catch (e) {
+0366:                 throw new GoogleGenerativeAIRequestInputError(`unable to convert customHeaders value ${JSON.stringify(customHeaders)} to Headers: ${e.message}`);
+0367:             }
+0368:         }
+
+--- line  ---
+0346:     const clientHeaders = [];
+0347:     if (requestOptions === null || requestOptions === void 0 ? void 0 : requestOptions.apiClient) {
+0348:         clientHeaders.push(requestOptions.apiClient);
+0349:     }
+0350:     clientHeaders.push(`${PACKAGE_LOG_HEADER}/${PACKAGE_VERSION}`);
+0351:     return clientHeaders.join(" ");
+0352: }
+0353: async function getHeaders(url) {
+0354:     var _a;
+0355:     const headers = new Headers();
+0356:     headers.append("Content-Type", "application/json");
+0357:     headers.append("x-goog-api-client", getClientHeaders(url.requestOptions));
+0358:     headers.append("x-goog-api-key", url.apiKey);
+0359:     let customHeaders = (_a = url.requestOptions) === null || _a === void 0 ? void 0 : _a.customHeaders;
+0360:     if (customHeaders) {
+0361:         if (!(customHeaders instanceof Headers)) {
+0362:             try {
+0363:                 customHeaders = new Headers(customHeaders);
+0364:             }
+0365:             catch (e) {
+0366:                 throw new GoogleGenerativeAIRequestInputError(`unable to convert customHeaders value ${JSON.stringify(customHeaders)} to Headers: ${e.message}`);
+0367:             }
+0368:         }
+0369:         for (const [headerName, headerValue] of customHeaders.entries()) {
+0370:             if (headerName === "x-goog-api-key") {
+
+--- line  ---
+0347:     if (requestOptions === null || requestOptions === void 0 ? void 0 : requestOptions.apiClient) {
+0348:         clientHeaders.push(requestOptions.apiClient);
+0349:     }
+0350:     clientHeaders.push(`${PACKAGE_LOG_HEADER}/${PACKAGE_VERSION}`);
+0351:     return clientHeaders.join(" ");
+0352: }
+0353: async function getHeaders(url) {
+0354:     var _a;
+0355:     const headers = new Headers();
+0356:     headers.append("Content-Type", "application/json");
+0357:     headers.append("x-goog-api-client", getClientHeaders(url.requestOptions));
+0358:     headers.append("x-goog-api-key", url.apiKey);
+0359:     let customHeaders = (_a = url.requestOptions) === null || _a === void 0 ? void 0 : _a.customHeaders;
+0360:     if (customHeaders) {
+0361:         if (!(customHeaders instanceof Headers)) {
+0362:             try {
+0363:                 customHeaders = new Headers(customHeaders);
+0364:             }
+0365:             catch (e) {
+0366:                 throw new GoogleGenerativeAIRequestInputError(`unable to convert customHeaders value ${JSON.stringify(customHeaders)} to Headers: ${e.message}`);
+0367:             }
+0368:         }
+0369:         for (const [headerName, headerValue] of customHeaders.entries()) {
+0370:             if (headerName === "x-goog-api-key") {
+0371:                 throw new GoogleGenerativeAIRequestInputError(`Cannot set reserved header name ${headerName}`);
+
+--- line  ---
+0349:     }
+0350:     clientHeaders.push(`${PACKAGE_LOG_HEADER}/${PACKAGE_VERSION}`);
+0351:     return clientHeaders.join(" ");
+0352: }
+0353: async function getHeaders(url) {
+0354:     var _a;
+0355:     const headers = new Headers();
+0356:     headers.append("Content-Type", "application/json");
+0357:     headers.append("x-goog-api-client", getClientHeaders(url.requestOptions));
+0358:     headers.append("x-goog-api-key", url.apiKey);
+0359:     let customHeaders = (_a = url.requestOptions) === null || _a === void 0 ? void 0 : _a.customHeaders;
+0360:     if (customHeaders) {
+0361:         if (!(customHeaders instanceof Headers)) {
+0362:             try {
+0363:                 customHeaders = new Headers(customHeaders);
+0364:             }
+0365:             catch (e) {
+0366:                 throw new GoogleGenerativeAIRequestInputError(`unable to convert customHeaders value ${JSON.stringify(customHeaders)} to Headers: ${e.message}`);
+0367:             }
+0368:         }
+0369:         for (const [headerName, headerValue] of customHeaders.entries()) {
+0370:             if (headerName === "x-goog-api-key") {
+0371:                 throw new GoogleGenerativeAIRequestInputError(`Cannot set reserved header name ${headerName}`);
+0372:             }
+0373:             else if (headerName === "x-goog-api-client") {
+
+--- line  ---
+0351:     return clientHeaders.join(" ");
+0352: }
+0353: async function getHeaders(url) {
+0354:     var _a;
+0355:     const headers = new Headers();
+0356:     headers.append("Content-Type", "application/json");
+0357:     headers.append("x-goog-api-client", getClientHeaders(url.requestOptions));
+0358:     headers.append("x-goog-api-key", url.apiKey);
+0359:     let customHeaders = (_a = url.requestOptions) === null || _a === void 0 ? void 0 : _a.customHeaders;
+0360:     if (customHeaders) {
+0361:         if (!(customHeaders instanceof Headers)) {
+0362:             try {
+0363:                 customHeaders = new Headers(customHeaders);
+0364:             }
+0365:             catch (e) {
+0366:                 throw new GoogleGenerativeAIRequestInputError(`unable to convert customHeaders value ${JSON.stringify(customHeaders)} to Headers: ${e.message}`);
+0367:             }
+0368:         }
+0369:         for (const [headerName, headerValue] of customHeaders.entries()) {
+0370:             if (headerName === "x-goog-api-key") {
+0371:                 throw new GoogleGenerativeAIRequestInputError(`Cannot set reserved header name ${headerName}`);
+0372:             }
+0373:             else if (headerName === "x-goog-api-client") {
+0374:                 throw new GoogleGenerativeAIRequestInputError(`Header name ${headerName} can only be set using the apiClient field`);
+0375:             }
+
+--- line  ---
+0352: }
+0353: async function getHeaders(url) {
+0354:     var _a;
+0355:     const headers = new Headers();
+0356:     headers.append("Content-Type", "application/json");
+0357:     headers.append("x-goog-api-client", getClientHeaders(url.requestOptions));
+0358:     headers.append("x-goog-api-key", url.apiKey);
+0359:     let customHeaders = (_a = url.requestOptions) === null || _a === void 0 ? void 0 : _a.customHeaders;
+0360:     if (customHeaders) {
+0361:         if (!(customHeaders instanceof Headers)) {
+0362:             try {
+0363:                 customHeaders = new Headers(customHeaders);
+0364:             }
+0365:             catch (e) {
+0366:                 throw new GoogleGenerativeAIRequestInputError(`unable to convert customHeaders value ${JSON.stringify(customHeaders)} to Headers: ${e.message}`);
+0367:             }
+0368:         }
+0369:         for (const [headerName, headerValue] of customHeaders.entries()) {
+0370:             if (headerName === "x-goog-api-key") {
+0371:                 throw new GoogleGenerativeAIRequestInputError(`Cannot set reserved header name ${headerName}`);
+0372:             }
+0373:             else if (headerName === "x-goog-api-client") {
+0374:                 throw new GoogleGenerativeAIRequestInputError(`Header name ${headerName} can only be set using the apiClient field`);
+0375:             }
+0376:             headers.append(headerName, headerValue);
+
+--- line  ---
+0353: async function getHeaders(url) {
+0354:     var _a;
+0355:     const headers = new Headers();
+0356:     headers.append("Content-Type", "application/json");
+0357:     headers.append("x-goog-api-client", getClientHeaders(url.requestOptions));
+0358:     headers.append("x-goog-api-key", url.apiKey);
+0359:     let customHeaders = (_a = url.requestOptions) === null || _a === void 0 ? void 0 : _a.customHeaders;
+0360:     if (customHeaders) {
+0361:         if (!(customHeaders instanceof Headers)) {
+0362:             try {
+0363:                 customHeaders = new Headers(customHeaders);
+0364:             }
+0365:             catch (e) {
+0366:                 throw new GoogleGenerativeAIRequestInputError(`unable to convert customHeaders value ${JSON.stringify(customHeaders)} to Headers: ${e.message}`);
+0367:             }
+0368:         }
+0369:         for (const [headerName, headerValue] of customHeaders.entries()) {
+0370:             if (headerName === "x-goog-api-key") {
+0371:                 throw new GoogleGenerativeAIRequestInputError(`Cannot set reserved header name ${headerName}`);
+0372:             }
+0373:             else if (headerName === "x-goog-api-client") {
+0374:                 throw new GoogleGenerativeAIRequestInputError(`Header name ${headerName} can only be set using the apiClient field`);
+0375:             }
+0376:             headers.append(headerName, headerValue);
+0377:         }
+
+--- line  ---
+0354:     var _a;
+0355:     const headers = new Headers();
+0356:     headers.append("Content-Type", "application/json");
+0357:     headers.append("x-goog-api-client", getClientHeaders(url.requestOptions));
+0358:     headers.append("x-goog-api-key", url.apiKey);
+0359:     let customHeaders = (_a = url.requestOptions) === null || _a === void 0 ? void 0 : _a.customHeaders;
+0360:     if (customHeaders) {
+0361:         if (!(customHeaders instanceof Headers)) {
+0362:             try {
+0363:                 customHeaders = new Headers(customHeaders);
+0364:             }
+0365:             catch (e) {
+0366:                 throw new GoogleGenerativeAIRequestInputError(`unable to convert customHeaders value ${JSON.stringify(customHeaders)} to Headers: ${e.message}`);
+0367:             }
+0368:         }
+0369:         for (const [headerName, headerValue] of customHeaders.entries()) {
+0370:             if (headerName === "x-goog-api-key") {
+0371:                 throw new GoogleGenerativeAIRequestInputError(`Cannot set reserved header name ${headerName}`);
+0372:             }
+0373:             else if (headerName === "x-goog-api-client") {
+0374:                 throw new GoogleGenerativeAIRequestInputError(`Header name ${headerName} can only be set using the apiClient field`);
+0375:             }
+0376:             headers.append(headerName, headerValue);
+0377:         }
+0378:     }
+
+--- line  ---
+0355:     const headers = new Headers();
+0356:     headers.append("Content-Type", "application/json");
+0357:     headers.append("x-goog-api-client", getClientHeaders(url.requestOptions));
+0358:     headers.append("x-goog-api-key", url.apiKey);
+0359:     let customHeaders = (_a = url.requestOptions) === null || _a === void 0 ? void 0 : _a.customHeaders;
+0360:     if (customHeaders) {
+0361:         if (!(customHeaders instanceof Headers)) {
+0362:             try {
+0363:                 customHeaders = new Headers(customHeaders);
+0364:             }
+0365:             catch (e) {
+0366:                 throw new GoogleGenerativeAIRequestInputError(`unable to convert customHeaders value ${JSON.stringify(customHeaders)} to Headers: ${e.message}`);
+0367:             }
+0368:         }
+0369:         for (const [headerName, headerValue] of customHeaders.entries()) {
+0370:             if (headerName === "x-goog-api-key") {
+0371:                 throw new GoogleGenerativeAIRequestInputError(`Cannot set reserved header name ${headerName}`);
+0372:             }
+0373:             else if (headerName === "x-goog-api-client") {
+0374:                 throw new GoogleGenerativeAIRequestInputError(`Header name ${headerName} can only be set using the apiClient field`);
+0375:             }
+0376:             headers.append(headerName, headerValue);
+0377:         }
+0378:     }
+0379:     return headers;
+
+--- line  ---
+0356:     headers.append("Content-Type", "application/json");
+0357:     headers.append("x-goog-api-client", getClientHeaders(url.requestOptions));
+0358:     headers.append("x-goog-api-key", url.apiKey);
+0359:     let customHeaders = (_a = url.requestOptions) === null || _a === void 0 ? void 0 : _a.customHeaders;
+0360:     if (customHeaders) {
+0361:         if (!(customHeaders instanceof Headers)) {
+0362:             try {
+0363:                 customHeaders = new Headers(customHeaders);
+0364:             }
+0365:             catch (e) {
+0366:                 throw new GoogleGenerativeAIRequestInputError(`unable to convert customHeaders value ${JSON.stringify(customHeaders)} to Headers: ${e.message}`);
+0367:             }
+0368:         }
+0369:         for (const [headerName, headerValue] of customHeaders.entries()) {
+0370:             if (headerName === "x-goog-api-key") {
+0371:                 throw new GoogleGenerativeAIRequestInputError(`Cannot set reserved header name ${headerName}`);
+0372:             }
+0373:             else if (headerName === "x-goog-api-client") {
+0374:                 throw new GoogleGenerativeAIRequestInputError(`Header name ${headerName} can only be set using the apiClient field`);
+0375:             }
+0376:             headers.append(headerName, headerValue);
+0377:         }
+0378:     }
+0379:     return headers;
+0380: }
+
+--- line  ---
+0357:     headers.append("x-goog-api-client", getClientHeaders(url.requestOptions));
+0358:     headers.append("x-goog-api-key", url.apiKey);
+0359:     let customHeaders = (_a = url.requestOptions) === null || _a === void 0 ? void 0 : _a.customHeaders;
+0360:     if (customHeaders) {
+0361:         if (!(customHeaders instanceof Headers)) {
+0362:             try {
+0363:                 customHeaders = new Headers(customHeaders);
+0364:             }
+0365:             catch (e) {
+0366:                 throw new GoogleGenerativeAIRequestInputError(`unable to convert customHeaders value ${JSON.stringify(customHeaders)} to Headers: ${e.message}`);
+0367:             }
+0368:         }
+0369:         for (const [headerName, headerValue] of customHeaders.entries()) {
+0370:             if (headerName === "x-goog-api-key") {
+0371:                 throw new GoogleGenerativeAIRequestInputError(`Cannot set reserved header name ${headerName}`);
+0372:             }
+0373:             else if (headerName === "x-goog-api-client") {
+0374:                 throw new GoogleGenerativeAIRequestInputError(`Header name ${headerName} can only be set using the apiClient field`);
+0375:             }
+0376:             headers.append(headerName, headerValue);
+0377:         }
+0378:     }
+0379:     return headers;
+0380: }
+0381: async function constructModelRequest(model, task, apiKey, stream, body, requestOptions) {
+
+--- line  ---
+0359:     let customHeaders = (_a = url.requestOptions) === null || _a === void 0 ? void 0 : _a.customHeaders;
+0360:     if (customHeaders) {
+0361:         if (!(customHeaders instanceof Headers)) {
+0362:             try {
+0363:                 customHeaders = new Headers(customHeaders);
+0364:             }
+0365:             catch (e) {
+0366:                 throw new GoogleGenerativeAIRequestInputError(`unable to convert customHeaders value ${JSON.stringify(customHeaders)} to Headers: ${e.message}`);
+0367:             }
+0368:         }
+0369:         for (const [headerName, headerValue] of customHeaders.entries()) {
+0370:             if (headerName === "x-goog-api-key") {
+0371:                 throw new GoogleGenerativeAIRequestInputError(`Cannot set reserved header name ${headerName}`);
+0372:             }
+0373:             else if (headerName === "x-goog-api-client") {
+0374:                 throw new GoogleGenerativeAIRequestInputError(`Header name ${headerName} can only be set using the apiClient field`);
+0375:             }
+0376:             headers.append(headerName, headerValue);
+0377:         }
+0378:     }
+0379:     return headers;
+0380: }
+0381: async function constructModelRequest(model, task, apiKey, stream, body, requestOptions) {
+0382:     const url = new RequestUrl(model, task, apiKey, stream, requestOptions);
+0383:     return {
+
+--- line  ---
+0362:             try {
+0363:                 customHeaders = new Headers(customHeaders);
+0364:             }
+0365:             catch (e) {
+0366:                 throw new GoogleGenerativeAIRequestInputError(`unable to convert customHeaders value ${JSON.stringify(customHeaders)} to Headers: ${e.message}`);
+0367:             }
+0368:         }
+0369:         for (const [headerName, headerValue] of customHeaders.entries()) {
+0370:             if (headerName === "x-goog-api-key") {
+0371:                 throw new GoogleGenerativeAIRequestInputError(`Cannot set reserved header name ${headerName}`);
+0372:             }
+0373:             else if (headerName === "x-goog-api-client") {
+0374:                 throw new GoogleGenerativeAIRequestInputError(`Header name ${headerName} can only be set using the apiClient field`);
+0375:             }
+0376:             headers.append(headerName, headerValue);
+0377:         }
+0378:     }
+0379:     return headers;
+0380: }
+0381: async function constructModelRequest(model, task, apiKey, stream, body, requestOptions) {
+0382:     const url = new RequestUrl(model, task, apiKey, stream, requestOptions);
+0383:     return {
+0384:         url: url.toString(),
+0385:         fetchOptions: Object.assign(Object.assign({}, buildFetchOptions(requestOptions)), { method: "POST", headers: await getHeaders(url), body }),
+0386:     };
+
+--- line  ---
+0365:             catch (e) {
+0366:                 throw new GoogleGenerativeAIRequestInputError(`unable to convert customHeaders value ${JSON.stringify(customHeaders)} to Headers: ${e.message}`);
+0367:             }
+0368:         }
+0369:         for (const [headerName, headerValue] of customHeaders.entries()) {
+0370:             if (headerName === "x-goog-api-key") {
+0371:                 throw new GoogleGenerativeAIRequestInputError(`Cannot set reserved header name ${headerName}`);
+0372:             }
+0373:             else if (headerName === "x-goog-api-client") {
+0374:                 throw new GoogleGenerativeAIRequestInputError(`Header name ${headerName} can only be set using the apiClient field`);
+0375:             }
+0376:             headers.append(headerName, headerValue);
+0377:         }
+0378:     }
+0379:     return headers;
+0380: }
+0381: async function constructModelRequest(model, task, apiKey, stream, body, requestOptions) {
+0382:     const url = new RequestUrl(model, task, apiKey, stream, requestOptions);
+0383:     return {
+0384:         url: url.toString(),
+0385:         fetchOptions: Object.assign(Object.assign({}, buildFetchOptions(requestOptions)), { method: "POST", headers: await getHeaders(url), body }),
+0386:     };
+0387: }
+0388: async function makeModelRequest(model, task, apiKey, stream, body, requestOptions = {}, 
+0389: // Allows this to be stubbed for tests
+
+--- line  ---
+0372:             }
+0373:             else if (headerName === "x-goog-api-client") {
+0374:                 throw new GoogleGenerativeAIRequestInputError(`Header name ${headerName} can only be set using the apiClient field`);
+0375:             }
+0376:             headers.append(headerName, headerValue);
+0377:         }
+0378:     }
+0379:     return headers;
+0380: }
+0381: async function constructModelRequest(model, task, apiKey, stream, body, requestOptions) {
+0382:     const url = new RequestUrl(model, task, apiKey, stream, requestOptions);
+0383:     return {
+0384:         url: url.toString(),
+0385:         fetchOptions: Object.assign(Object.assign({}, buildFetchOptions(requestOptions)), { method: "POST", headers: await getHeaders(url), body }),
+0386:     };
+0387: }
+0388: async function makeModelRequest(model, task, apiKey, stream, body, requestOptions = {}, 
+0389: // Allows this to be stubbed for tests
+0390: fetchFn = fetch) {
+0391:     const { url, fetchOptions } = await constructModelRequest(model, task, apiKey, stream, body, requestOptions);
+0392:     return makeRequest(url, fetchOptions, fetchFn);
+0393: }
+0394: async function makeRequest(url, fetchOptions, fetchFn = fetch) {
+0395:     let response;
+0396:     try {
+
+--- line  ---
+0375:             }
+0376:             headers.append(headerName, headerValue);
+0377:         }
+0378:     }
+0379:     return headers;
+0380: }
+0381: async function constructModelRequest(model, task, apiKey, stream, body, requestOptions) {
+0382:     const url = new RequestUrl(model, task, apiKey, stream, requestOptions);
+0383:     return {
+0384:         url: url.toString(),
+0385:         fetchOptions: Object.assign(Object.assign({}, buildFetchOptions(requestOptions)), { method: "POST", headers: await getHeaders(url), body }),
+0386:     };
+0387: }
+0388: async function makeModelRequest(model, task, apiKey, stream, body, requestOptions = {}, 
+0389: // Allows this to be stubbed for tests
+0390: fetchFn = fetch) {
+0391:     const { url, fetchOptions } = await constructModelRequest(model, task, apiKey, stream, body, requestOptions);
+0392:     return makeRequest(url, fetchOptions, fetchFn);
+0393: }
+0394: async function makeRequest(url, fetchOptions, fetchFn = fetch) {
+0395:     let response;
+0396:     try {
+0397:         response = await fetchFn(url, fetchOptions);
+0398:     }
+0399:     catch (e) {
+
+--- line  ---
+0377:         }
+0378:     }
+0379:     return headers;
+0380: }
+0381: async function constructModelRequest(model, task, apiKey, stream, body, requestOptions) {
+0382:     const url = new RequestUrl(model, task, apiKey, stream, requestOptions);
+0383:     return {
+0384:         url: url.toString(),
+0385:         fetchOptions: Object.assign(Object.assign({}, buildFetchOptions(requestOptions)), { method: "POST", headers: await getHeaders(url), body }),
+0386:     };
+0387: }
+0388: async function makeModelRequest(model, task, apiKey, stream, body, requestOptions = {}, 
+0389: // Allows this to be stubbed for tests
+0390: fetchFn = fetch) {
+0391:     const { url, fetchOptions } = await constructModelRequest(model, task, apiKey, stream, body, requestOptions);
+0392:     return makeRequest(url, fetchOptions, fetchFn);
+0393: }
+0394: async function makeRequest(url, fetchOptions, fetchFn = fetch) {
+0395:     let response;
+0396:     try {
+0397:         response = await fetchFn(url, fetchOptions);
+0398:     }
+0399:     catch (e) {
+0400:         handleResponseError(e, url);
+0401:     }
+
+--- line  ---
+0378:     }
+0379:     return headers;
+0380: }
+0381: async function constructModelRequest(model, task, apiKey, stream, body, requestOptions) {
+0382:     const url = new RequestUrl(model, task, apiKey, stream, requestOptions);
+0383:     return {
+0384:         url: url.toString(),
+0385:         fetchOptions: Object.assign(Object.assign({}, buildFetchOptions(requestOptions)), { method: "POST", headers: await getHeaders(url), body }),
+0386:     };
+0387: }
+0388: async function makeModelRequest(model, task, apiKey, stream, body, requestOptions = {}, 
+0389: // Allows this to be stubbed for tests
+0390: fetchFn = fetch) {
+0391:     const { url, fetchOptions } = await constructModelRequest(model, task, apiKey, stream, body, requestOptions);
+0392:     return makeRequest(url, fetchOptions, fetchFn);
+0393: }
+0394: async function makeRequest(url, fetchOptions, fetchFn = fetch) {
+0395:     let response;
+0396:     try {
+0397:         response = await fetchFn(url, fetchOptions);
+0398:     }
+0399:     catch (e) {
+0400:         handleResponseError(e, url);
+0401:     }
+0402:     if (!response.ok) {
+
+--- line  ---
+0381: async function constructModelRequest(model, task, apiKey, stream, body, requestOptions) {
+0382:     const url = new RequestUrl(model, task, apiKey, stream, requestOptions);
+0383:     return {
+0384:         url: url.toString(),
+0385:         fetchOptions: Object.assign(Object.assign({}, buildFetchOptions(requestOptions)), { method: "POST", headers: await getHeaders(url), body }),
+0386:     };
+0387: }
+0388: async function makeModelRequest(model, task, apiKey, stream, body, requestOptions = {}, 
+0389: // Allows this to be stubbed for tests
+0390: fetchFn = fetch) {
+0391:     const { url, fetchOptions } = await constructModelRequest(model, task, apiKey, stream, body, requestOptions);
+0392:     return makeRequest(url, fetchOptions, fetchFn);
+0393: }
+0394: async function makeRequest(url, fetchOptions, fetchFn = fetch) {
+0395:     let response;
+0396:     try {
+0397:         response = await fetchFn(url, fetchOptions);
+0398:     }
+0399:     catch (e) {
+0400:         handleResponseError(e, url);
+0401:     }
+0402:     if (!response.ok) {
+0403:         await handleResponseNotOk(response, url);
+0404:     }
+0405:     return response;
+
+--- line  ---
+0384:         url: url.toString(),
+0385:         fetchOptions: Object.assign(Object.assign({}, buildFetchOptions(requestOptions)), { method: "POST", headers: await getHeaders(url), body }),
+0386:     };
+0387: }
+0388: async function makeModelRequest(model, task, apiKey, stream, body, requestOptions = {}, 
+0389: // Allows this to be stubbed for tests
+0390: fetchFn = fetch) {
+0391:     const { url, fetchOptions } = await constructModelRequest(model, task, apiKey, stream, body, requestOptions);
+0392:     return makeRequest(url, fetchOptions, fetchFn);
+0393: }
+0394: async function makeRequest(url, fetchOptions, fetchFn = fetch) {
+0395:     let response;
+0396:     try {
+0397:         response = await fetchFn(url, fetchOptions);
+0398:     }
+0399:     catch (e) {
+0400:         handleResponseError(e, url);
+0401:     }
+0402:     if (!response.ok) {
+0403:         await handleResponseNotOk(response, url);
+0404:     }
+0405:     return response;
+0406: }
+0407: function handleResponseError(e, url) {
+0408:     let err = e;
+
+--- line  ---
+0387: }
+0388: async function makeModelRequest(model, task, apiKey, stream, body, requestOptions = {}, 
+0389: // Allows this to be stubbed for tests
+0390: fetchFn = fetch) {
+0391:     const { url, fetchOptions } = await constructModelRequest(model, task, apiKey, stream, body, requestOptions);
+0392:     return makeRequest(url, fetchOptions, fetchFn);
+0393: }
+0394: async function makeRequest(url, fetchOptions, fetchFn = fetch) {
+0395:     let response;
+0396:     try {
+0397:         response = await fetchFn(url, fetchOptions);
+0398:     }
+0399:     catch (e) {
+0400:         handleResponseError(e, url);
+0401:     }
+0402:     if (!response.ok) {
+0403:         await handleResponseNotOk(response, url);
+0404:     }
+0405:     return response;
+0406: }
+0407: function handleResponseError(e, url) {
+0408:     let err = e;
+0409:     if (err.name === "AbortError") {
+0410:         err = new GoogleGenerativeAIAbortError(`Request aborted when fetching ${url.toString()}: ${e.message}`);
+0411:         err.stack = e.stack;
+
+--- line  ---
+0857:  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+0858:  * See the License for the specific language governing permissions and
+0859:  * limitations under the License.
+0860:  */
+0861: async function generateContentStream(apiKey, model, params, requestOptions) {
+0862:     const response = await makeModelRequest(model, Task.STREAM_GENERATE_CONTENT, apiKey, 
+0863:     /* stream */ true, JSON.stringify(params), requestOptions);
+0864:     return processStream(response);
+0865: }
+0866: async function generateContent(apiKey, model, params, requestOptions) {
+0867:     const response = await makeModelRequest(model, Task.GENERATE_CONTENT, apiKey, 
+0868:     /* stream */ false, JSON.stringify(params), requestOptions);
+0869:     const responseJson = await response.json();
+0870:     const enhancedResponse = addHelpers(responseJson);
+0871:     return {
+0872:         response: enhancedResponse,
+0873:     };
+0874: }
+0875: 
+0876: /**
+0877:  * @license
+0878:  * Copyright 2024 Google LLC
+0879:  *
+0880:  * Licensed under the Apache License, Version 2.0 (the "License");
+0881:  * you may not use this file except in compliance with the License.
+
+--- line  ---
+0858:  * See the License for the specific language governing permissions and
+0859:  * limitations under the License.
+0860:  */
+0861: async function generateContentStream(apiKey, model, params, requestOptions) {
+0862:     const response = await makeModelRequest(model, Task.STREAM_GENERATE_CONTENT, apiKey, 
+0863:     /* stream */ true, JSON.stringify(params), requestOptions);
+0864:     return processStream(response);
+0865: }
+0866: async function generateContent(apiKey, model, params, requestOptions) {
+0867:     const response = await makeModelRequest(model, Task.GENERATE_CONTENT, apiKey, 
+0868:     /* stream */ false, JSON.stringify(params), requestOptions);
+0869:     const responseJson = await response.json();
+0870:     const enhancedResponse = addHelpers(responseJson);
+0871:     return {
+0872:         response: enhancedResponse,
+0873:     };
+0874: }
+0875: 
+0876: /**
+0877:  * @license
+0878:  * Copyright 2024 Google LLC
+0879:  *
+0880:  * Licensed under the Apache License, Version 2.0 (the "License");
+0881:  * you may not use this file except in compliance with the License.
+0882:  * You may obtain a copy of the License at
+
+--- line  ---
+0862:     const response = await makeModelRequest(model, Task.STREAM_GENERATE_CONTENT, apiKey, 
+0863:     /* stream */ true, JSON.stringify(params), requestOptions);
+0864:     return processStream(response);
+0865: }
+0866: async function generateContent(apiKey, model, params, requestOptions) {
+0867:     const response = await makeModelRequest(model, Task.GENERATE_CONTENT, apiKey, 
+0868:     /* stream */ false, JSON.stringify(params), requestOptions);
+0869:     const responseJson = await response.json();
+0870:     const enhancedResponse = addHelpers(responseJson);
+0871:     return {
+0872:         response: enhancedResponse,
+0873:     };
+0874: }
+0875: 
+0876: /**
+0877:  * @license
+0878:  * Copyright 2024 Google LLC
+0879:  *
+0880:  * Licensed under the Apache License, Version 2.0 (the "License");
+0881:  * you may not use this file except in compliance with the License.
+0882:  * You may obtain a copy of the License at
+0883:  *
+0884:  *   http://www.apache.org/licenses/LICENSE-2.0
+0885:  *
+0886:  * Unless required by applicable law or agreed to in writing, software
+
+--- line  ---
+0863:     /* stream */ true, JSON.stringify(params), requestOptions);
+0864:     return processStream(response);
+0865: }
+0866: async function generateContent(apiKey, model, params, requestOptions) {
+0867:     const response = await makeModelRequest(model, Task.GENERATE_CONTENT, apiKey, 
+0868:     /* stream */ false, JSON.stringify(params), requestOptions);
+0869:     const responseJson = await response.json();
+0870:     const enhancedResponse = addHelpers(responseJson);
+0871:     return {
+0872:         response: enhancedResponse,
+0873:     };
+0874: }
+0875: 
+0876: /**
+0877:  * @license
+0878:  * Copyright 2024 Google LLC
+0879:  *
+0880:  * Licensed under the Apache License, Version 2.0 (the "License");
+0881:  * you may not use this file except in compliance with the License.
+0882:  * You may obtain a copy of the License at
+0883:  *
+0884:  *   http://www.apache.org/licenses/LICENSE-2.0
+0885:  *
+0886:  * Unless required by applicable law or agreed to in writing, software
+0887:  * distributed under the License is distributed on an "AS IS" BASIS,
+
+--- line  ---
+1137:  *
+1138:  * @public
+1139:  */
+1140: class ChatSession {
+1141:     constructor(apiKey, model, params, _requestOptions = {}) {
+1142:         this.model = model;
+1143:         this.params = params;
+1144:         this._requestOptions = _requestOptions;
+1145:         this._history = [];
+1146:         this._sendPromise = Promise.resolve();
+1147:         this._apiKey = apiKey;
+1148:         if (params === null || params === void 0 ? void 0 : params.history) {
+1149:             validateChatHistory(params.history);
+1150:             this._history = params.history;
+1151:         }
+1152:     }
+1153:     /**
+1154:      * Gets the chat history so far. Blocked prompts are not added to history.
+1155:      * Blocked candidates are not added to history, nor are the prompts that
+1156:      * generated them.
+1157:      */
+1158:     async getHistory() {
+1159:         await this._sendPromise;
+1160:         return this._history;
+1161:     }
+
+--- line  ---
+1143:         this.params = params;
+1144:         this._requestOptions = _requestOptions;
+1145:         this._history = [];
+1146:         this._sendPromise = Promise.resolve();
+1147:         this._apiKey = apiKey;
+1148:         if (params === null || params === void 0 ? void 0 : params.history) {
+1149:             validateChatHistory(params.history);
+1150:             this._history = params.history;
+1151:         }
+1152:     }
+1153:     /**
+1154:      * Gets the chat history so far. Blocked prompts are not added to history.
+1155:      * Blocked candidates are not added to history, nor are the prompts that
+1156:      * generated them.
+1157:      */
+1158:     async getHistory() {
+1159:         await this._sendPromise;
+1160:         return this._history;
+1161:     }
+1162:     /**
+1163:      * Sends a chat message and receives a non-streaming
+1164:      * {@link GenerateContentResult}.
+1165:      *
+1166:      * Fields set in the optional {@link SingleRequestOptions} parameter will
+1167:      * take precedence over the {@link RequestOptions} values provided to
+
+--- line  ---
+1183:         const chatSessionRequestOptions = Object.assign(Object.assign({}, this._requestOptions), requestOptions);
+1184:         let finalResult;
+1185:         // Add onto the chain.
+1186:         this._sendPromise = this._sendPromise
+1187:             .then(() => generateContent(this._apiKey, this.model, generateContentRequest, chatSessionRequestOptions))
+1188:             .then((result) => {
+1189:             var _a;
+1190:             if (isValidResponse(result.response)) {
+1191:                 this._history.push(newContent);
+1192:                 const responseContent = Object.assign({ parts: [], 
+1193:                     // Response seems to come back without a role set.
+1194:                     role: "model" }, (_a = result.response.candidates) === null || _a === void 0 ? void 0 : _a[0].content);
+1195:                 this._history.push(responseContent);
+1196:             }
+1197:             else {
+1198:                 const blockErrorMessage = formatBlockErrorMessage(result.response);
+1199:                 if (blockErrorMessage) {
+1200:                     console.warn(`sendMessage() was unsuccessful. ${blockErrorMessage}. Inspect response object for details.`);
+1201:                 }
+1202:             }
+1203:             finalResult = result;
+1204:         })
+1205:             .catch((e) => {
+1206:             // Resets _sendPromise to avoid subsequent calls failing and throw error.
+1207:             this._sendPromise = Promise.resolve();
+
+--- line  ---
+1232:             cachedContent: (_f = this.params) === null || _f === void 0 ? void 0 : _f.cachedContent,
+1233:             contents: [...this._history, newContent],
+1234:         };
+1235:         const chatSessionRequestOptions = Object.assign(Object.assign({}, this._requestOptions), requestOptions);
+1236:         const streamPromise = generateContentStream(this._apiKey, this.model, generateContentRequest, chatSessionRequestOptions);
+1237:         // Add onto the chain.
+1238:         this._sendPromise = this._sendPromise
+1239:             .then(() => streamPromise)
+1240:             // This must be handled to avoid unhandled rejection, but jump
+1241:             // to the final catch block with a label to not log this error.
+1242:             .catch((_ignored) => {
+1243:             throw new Error(SILENT_ERROR);
+1244:         })
+1245:             .then((streamResult) => streamResult.response)
+1246:             .then((response) => {
+1247:             if (isValidResponse(response)) {
+1248:                 this._history.push(newContent);
+1249:                 const responseContent = Object.assign({}, response.candidates[0].content);
+1250:                 // Response seems to come back without a role set.
+1251:                 if (!responseContent.role) {
+1252:                     responseContent.role = "model";
+1253:                 }
+1254:                 this._history.push(responseContent);
+1255:             }
+1256:             else {
+
+--- line  ---
+1289:  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+1290:  * See the License for the specific language governing permissions and
+1291:  * limitations under the License.
+1292:  */
+1293: async function countTokens(apiKey, model, params, singleRequestOptions) {
+1294:     const response = await makeModelRequest(model, Task.COUNT_TOKENS, apiKey, false, JSON.stringify(params), singleRequestOptions);
+1295:     return response.json();
+1296: }
+1297: 
+1298: /**
+1299:  * @license
+1300:  * Copyright 2024 Google LLC
+1301:  *
+1302:  * Licensed under the Apache License, Version 2.0 (the "License");
+1303:  * you may not use this file except in compliance with the License.
+1304:  * You may obtain a copy of the License at
+1305:  *
+1306:  *   http://www.apache.org/licenses/LICENSE-2.0
+1307:  *
+1308:  * Unless required by applicable law or agreed to in writing, software
+1309:  * distributed under the License is distributed on an "AS IS" BASIS,
+1310:  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+1311:  * See the License for the specific language governing permissions and
+1312:  * limitations under the License.
+1313:  */
+
+--- line  ---
+1290:  * See the License for the specific language governing permissions and
+1291:  * limitations under the License.
+1292:  */
+1293: async function countTokens(apiKey, model, params, singleRequestOptions) {
+1294:     const response = await makeModelRequest(model, Task.COUNT_TOKENS, apiKey, false, JSON.stringify(params), singleRequestOptions);
+1295:     return response.json();
+1296: }
+1297: 
+1298: /**
+1299:  * @license
+1300:  * Copyright 2024 Google LLC
+1301:  *
+1302:  * Licensed under the Apache License, Version 2.0 (the "License");
+1303:  * you may not use this file except in compliance with the License.
+1304:  * You may obtain a copy of the License at
+1305:  *
+1306:  *   http://www.apache.org/licenses/LICENSE-2.0
+1307:  *
+1308:  * Unless required by applicable law or agreed to in writing, software
+1309:  * distributed under the License is distributed on an "AS IS" BASIS,
+1310:  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+1311:  * See the License for the specific language governing permissions and
+1312:  * limitations under the License.
+1313:  */
+1314: async function embedContent(apiKey, model, params, requestOptions) {
+
+--- line  ---
+1310:  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+1311:  * See the License for the specific language governing permissions and
+1312:  * limitations under the License.
+1313:  */
+1314: async function embedContent(apiKey, model, params, requestOptions) {
+1315:     const response = await makeModelRequest(model, Task.EMBED_CONTENT, apiKey, false, JSON.stringify(params), requestOptions);
+1316:     return response.json();
+1317: }
+1318: async function batchEmbedContents(apiKey, model, params, requestOptions) {
+1319:     const requestsWithModel = params.requests.map((request) => {
+1320:         return Object.assign(Object.assign({}, request), { model });
+1321:     });
+1322:     const response = await makeModelRequest(model, Task.BATCH_EMBED_CONTENTS, apiKey, false, JSON.stringify({ requests: requestsWithModel }), requestOptions);
+1323:     return response.json();
+1324: }
+1325: 
+1326: /**
+1327:  * @license
+1328:  * Copyright 2024 Google LLC
+1329:  *
+1330:  * Licensed under the Apache License, Version 2.0 (the "License");
+1331:  * you may not use this file except in compliance with the License.
+1332:  * You may obtain a copy of the License at
+1333:  *
+1334:  *   http://www.apache.org/licenses/LICENSE-2.0
+
+--- line  ---
+1311:  * See the License for the specific language governing permissions and
+1312:  * limitations under the License.
+1313:  */
+1314: async function embedContent(apiKey, model, params, requestOptions) {
+1315:     const response = await makeModelRequest(model, Task.EMBED_CONTENT, apiKey, false, JSON.stringify(params), requestOptions);
+1316:     return response.json();
+1317: }
+1318: async function batchEmbedContents(apiKey, model, params, requestOptions) {
+1319:     const requestsWithModel = params.requests.map((request) => {
+1320:         return Object.assign(Object.assign({}, request), { model });
+1321:     });
+1322:     const response = await makeModelRequest(model, Task.BATCH_EMBED_CONTENTS, apiKey, false, JSON.stringify({ requests: requestsWithModel }), requestOptions);
+1323:     return response.json();
+1324: }
+1325: 
+1326: /**
+1327:  * @license
+1328:  * Copyright 2024 Google LLC
+1329:  *
+1330:  * Licensed under the Apache License, Version 2.0 (the "License");
+1331:  * you may not use this file except in compliance with the License.
+1332:  * You may obtain a copy of the License at
+1333:  *
+1334:  *   http://www.apache.org/licenses/LICENSE-2.0
+1335:  *
+
+--- line  ---
+1314: async function embedContent(apiKey, model, params, requestOptions) {
+1315:     const response = await makeModelRequest(model, Task.EMBED_CONTENT, apiKey, false, JSON.stringify(params), requestOptions);
+1316:     return response.json();
+1317: }
+1318: async function batchEmbedContents(apiKey, model, params, requestOptions) {
+1319:     const requestsWithModel = params.requests.map((request) => {
+1320:         return Object.assign(Object.assign({}, request), { model });
+1321:     });
+1322:     const response = await makeModelRequest(model, Task.BATCH_EMBED_CONTENTS, apiKey, false, JSON.stringify({ requests: requestsWithModel }), requestOptions);
+1323:     return response.json();
+1324: }
+1325: 
+1326: /**
+1327:  * @license
+1328:  * Copyright 2024 Google LLC
+1329:  *
+1330:  * Licensed under the Apache License, Version 2.0 (the "License");
+1331:  * you may not use this file except in compliance with the License.
+1332:  * You may obtain a copy of the License at
+1333:  *
+1334:  *   http://www.apache.org/licenses/LICENSE-2.0
+1335:  *
+1336:  * Unless required by applicable law or agreed to in writing, software
+1337:  * distributed under the License is distributed on an "AS IS" BASIS,
+1338:  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+
+--- line  ---
+1318: async function batchEmbedContents(apiKey, model, params, requestOptions) {
+1319:     const requestsWithModel = params.requests.map((request) => {
+1320:         return Object.assign(Object.assign({}, request), { model });
+1321:     });
+1322:     const response = await makeModelRequest(model, Task.BATCH_EMBED_CONTENTS, apiKey, false, JSON.stringify({ requests: requestsWithModel }), requestOptions);
+1323:     return response.json();
+1324: }
+1325: 
+1326: /**
+1327:  * @license
+1328:  * Copyright 2024 Google LLC
+1329:  *
+1330:  * Licensed under the Apache License, Version 2.0 (the "License");
+1331:  * you may not use this file except in compliance with the License.
+1332:  * You may obtain a copy of the License at
+1333:  *
+1334:  *   http://www.apache.org/licenses/LICENSE-2.0
+1335:  *
+1336:  * Unless required by applicable law or agreed to in writing, software
+1337:  * distributed under the License is distributed on an "AS IS" BASIS,
+1338:  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+1339:  * See the License for the specific language governing permissions and
+1340:  * limitations under the License.
+1341:  */
+1342: /**
+
+--- line  ---
+1343:  * Class for generative model APIs.
+1344:  * @public
+1345:  */
+1346: class GenerativeModel {
+1347:     constructor(apiKey, modelParams, _requestOptions = {}) {
+1348:         this.apiKey = apiKey;
+1349:         this._requestOptions = _requestOptions;
+1350:         if (modelParams.model.includes("/")) {
+1351:             // Models may be named "models/model-name" or "tunedModels/model-name"
+1352:             this.model = modelParams.model;
+1353:         }
+1354:         else {
+1355:             // If path is not included, assume it's a non-tuned model.
+1356:             this.model = `models/${modelParams.model}`;
+1357:         }
+1358:         this.generationConfig = modelParams.generationConfig || {};
+1359:         this.safetySettings = modelParams.safetySettings || [];
+1360:         this.tools = modelParams.tools;
+1361:         this.toolConfig = modelParams.toolConfig;
+1362:         this.systemInstruction = formatSystemInstruction(modelParams.systemInstruction);
+1363:         this.cachedContent = modelParams.cachedContent;
+1364:     }
+1365:     /**
+1366:      * Makes a single non-streaming call to the model
+1367:      * and returns an object containing a single {@link GenerateContentResponse}.
+
+--- line  ---
+1344:  * @public
+1345:  */
+1346: class GenerativeModel {
+1347:     constructor(apiKey, modelParams, _requestOptions = {}) {
+1348:         this.apiKey = apiKey;
+1349:         this._requestOptions = _requestOptions;
+1350:         if (modelParams.model.includes("/")) {
+1351:             // Models may be named "models/model-name" or "tunedModels/model-name"
+1352:             this.model = modelParams.model;
+1353:         }
+1354:         else {
+1355:             // If path is not included, assume it's a non-tuned model.
+1356:             this.model = `models/${modelParams.model}`;
+1357:         }
+1358:         this.generationConfig = modelParams.generationConfig || {};
+1359:         this.safetySettings = modelParams.safetySettings || [];
+1360:         this.tools = modelParams.tools;
+1361:         this.toolConfig = modelParams.toolConfig;
+1362:         this.systemInstruction = formatSystemInstruction(modelParams.systemInstruction);
+1363:         this.cachedContent = modelParams.cachedContent;
+1364:     }
+1365:     /**
+1366:      * Makes a single non-streaming call to the model
+1367:      * and returns an object containing a single {@link GenerateContentResponse}.
+1368:      *
+
+--- line  ---
+1373:     async generateContent(request, requestOptions = {}) {
+1374:         var _a;
+1375:         const formattedParams = formatGenerateContentInput(request);
+1376:         const generativeModelRequestOptions = Object.assign(Object.assign({}, this._requestOptions), requestOptions);
+1377:         return generateContent(this.apiKey, this.model, Object.assign({ generationConfig: this.generationConfig, safetySettings: this.safetySettings, tools: this.tools, toolConfig: this.toolConfig, systemInstruction: this.systemInstruction, cachedContent: (_a = this.cachedContent) === null || _a === void 0 ? void 0 : _a.name }, formattedParams), generativeModelRequestOptions);
+1378:     }
+1379:     /**
+1380:      * Makes a single streaming call to the model and returns an object
+1381:      * containing an iterable stream that iterates over all chunks in the
+1382:      * streaming response as well as a promise that returns the final
+1383:      * aggregated response.
+1384:      *
+1385:      * Fields set in the optional {@link SingleRequestOptions} parameter will
+1386:      * take precedence over the {@link RequestOptions} values provided to
+1387:      * {@link GoogleGenerativeAI.getGenerativeModel }.
+1388:      */
+1389:     async generateContentStream(request, requestOptions = {}) {
+1390:         var _a;
+1391:         const formattedParams = formatGenerateContentInput(request);
+1392:         const generativeModelRequestOptions = Object.assign(Object.assign({}, this._requestOptions), requestOptions);
+1393:         return generateContentStream(this.apiKey, this.model, Object.assign({ generationConfig: this.generationConfig, safetySettings: this.safetySettings, tools: this.tools, toolConfig: this.toolConfig, systemInstruction: this.systemInstruction, cachedContent: (_a = this.cachedContent) === null || _a === void 0 ? void 0 : _a.name }, formattedParams), generativeModelRequestOptions);
+1394:     }
+1395:     /**
+1396:      * Gets a new {@link ChatSession} instance which can be used for
+1397:      * multi-turn chats.
+
+--- line  ---
+1389:     async generateContentStream(request, requestOptions = {}) {
+1390:         var _a;
+1391:         const formattedParams = formatGenerateContentInput(request);
+1392:         const generativeModelRequestOptions = Object.assign(Object.assign({}, this._requestOptions), requestOptions);
+1393:         return generateContentStream(this.apiKey, this.model, Object.assign({ generationConfig: this.generationConfig, safetySettings: this.safetySettings, tools: this.tools, toolConfig: this.toolConfig, systemInstruction: this.systemInstruction, cachedContent: (_a = this.cachedContent) === null || _a === void 0 ? void 0 : _a.name }, formattedParams), generativeModelRequestOptions);
+1394:     }
+1395:     /**
+1396:      * Gets a new {@link ChatSession} instance which can be used for
+1397:      * multi-turn chats.
+1398:      */
+1399:     startChat(startChatParams) {
+1400:         var _a;
+1401:         return new ChatSession(this.apiKey, this.model, Object.assign({ generationConfig: this.generationConfig, safetySettings: this.safetySettings, tools: this.tools, toolConfig: this.toolConfig, systemInstruction: this.systemInstruction, cachedContent: (_a = this.cachedContent) === null || _a === void 0 ? void 0 : _a.name }, startChatParams), this._requestOptions);
+1402:     }
+1403:     /**
+1404:      * Counts the tokens in the provided request.
+1405:      *
+1406:      * Fields set in the optional {@link SingleRequestOptions} parameter will
+1407:      * take precedence over the {@link RequestOptions} values provided to
+1408:      * {@link GoogleGenerativeAI.getGenerativeModel }.
+1409:      */
+1410:     async countTokens(request, requestOptions = {}) {
+1411:         const formattedParams = formatCountTokensInput(request, {
+1412:             model: this.model,
+1413:             generationConfig: this.generationConfig,
+
+--- line  ---
+1397:      * multi-turn chats.
+1398:      */
+1399:     startChat(startChatParams) {
+1400:         var _a;
+1401:         return new ChatSession(this.apiKey, this.model, Object.assign({ generationConfig: this.generationConfig, safetySettings: this.safetySettings, tools: this.tools, toolConfig: this.toolConfig, systemInstruction: this.systemInstruction, cachedContent: (_a = this.cachedContent) === null || _a === void 0 ? void 0 : _a.name }, startChatParams), this._requestOptions);
+1402:     }
+1403:     /**
+1404:      * Counts the tokens in the provided request.
+1405:      *
+1406:      * Fields set in the optional {@link SingleRequestOptions} parameter will
+1407:      * take precedence over the {@link RequestOptions} values provided to
+1408:      * {@link GoogleGenerativeAI.getGenerativeModel }.
+1409:      */
+1410:     async countTokens(request, requestOptions = {}) {
+1411:         const formattedParams = formatCountTokensInput(request, {
+1412:             model: this.model,
+1413:             generationConfig: this.generationConfig,
+1414:             safetySettings: this.safetySettings,
+1415:             tools: this.tools,
+1416:             toolConfig: this.toolConfig,
+1417:             systemInstruction: this.systemInstruction,
+1418:             cachedContent: this.cachedContent,
+1419:         });
+1420:         const generativeModelRequestOptions = Object.assign(Object.assign({}, this._requestOptions), requestOptions);
+1421:         return countTokens(this.apiKey, this.model, formattedParams, generativeModelRequestOptions);
+
+--- line  ---
+1417:             systemInstruction: this.systemInstruction,
+1418:             cachedContent: this.cachedContent,
+1419:         });
+1420:         const generativeModelRequestOptions = Object.assign(Object.assign({}, this._requestOptions), requestOptions);
+1421:         return countTokens(this.apiKey, this.model, formattedParams, generativeModelRequestOptions);
+1422:     }
+1423:     /**
+1424:      * Embeds the provided content.
+1425:      *
+1426:      * Fields set in the optional {@link SingleRequestOptions} parameter will
+1427:      * take precedence over the {@link RequestOptions} values provided to
+1428:      * {@link GoogleGenerativeAI.getGenerativeModel }.
+1429:      */
+1430:     async embedContent(request, requestOptions = {}) {
+1431:         const formattedParams = formatEmbedContentInput(request);
+1432:         const generativeModelRequestOptions = Object.assign(Object.assign({}, this._requestOptions), requestOptions);
+1433:         return embedContent(this.apiKey, this.model, formattedParams, generativeModelRequestOptions);
+1434:     }
+1435:     /**
+1436:      * Embeds an array of {@link EmbedContentRequest}s.
+1437:      *
+1438:      * Fields set in the optional {@link SingleRequestOptions} parameter will
+1439:      * take precedence over the {@link RequestOptions} values provided to
+1440:      * {@link GoogleGenerativeAI.getGenerativeModel }.
+1441:      */
+
+--- line  ---
+1429:      */
+1430:     async embedContent(request, requestOptions = {}) {
+1431:         const formattedParams = formatEmbedContentInput(request);
+1432:         const generativeModelRequestOptions = Object.assign(Object.assign({}, this._requestOptions), requestOptions);
+1433:         return embedContent(this.apiKey, this.model, formattedParams, generativeModelRequestOptions);
+1434:     }
+1435:     /**
+1436:      * Embeds an array of {@link EmbedContentRequest}s.
+1437:      *
+1438:      * Fields set in the optional {@link SingleRequestOptions} parameter will
+1439:      * take precedence over the {@link RequestOptions} values provided to
+1440:      * {@link GoogleGenerativeAI.getGenerativeModel }.
+1441:      */
+1442:     async batchEmbedContents(batchEmbedContentRequest, requestOptions = {}) {
+1443:         const generativeModelRequestOptions = Object.assign(Object.assign({}, this._requestOptions), requestOptions);
+1444:         return batchEmbedContents(this.apiKey, this.model, batchEmbedContentRequest, generativeModelRequestOptions);
+1445:     }
+1446: }
+1447: 
+1448: /**
+1449:  * @license
+1450:  * Copyright 2024 Google LLC
+1451:  *
+1452:  * Licensed under the Apache License, Version 2.0 (the "License");
+1453:  * you may not use this file except in compliance with the License.
+
+--- line  ---
+1440:      * {@link GoogleGenerativeAI.getGenerativeModel }.
+1441:      */
+1442:     async batchEmbedContents(batchEmbedContentRequest, requestOptions = {}) {
+1443:         const generativeModelRequestOptions = Object.assign(Object.assign({}, this._requestOptions), requestOptions);
+1444:         return batchEmbedContents(this.apiKey, this.model, batchEmbedContentRequest, generativeModelRequestOptions);
+1445:     }
+1446: }
+1447: 
+1448: /**
+1449:  * @license
+1450:  * Copyright 2024 Google LLC
+1451:  *
+1452:  * Licensed under the Apache License, Version 2.0 (the "License");
+1453:  * you may not use this file except in compliance with the License.
+1454:  * You may obtain a copy of the License at
+1455:  *
+1456:  *   http://www.apache.org/licenses/LICENSE-2.0
+1457:  *
+1458:  * Unless required by applicable law or agreed to in writing, software
+1459:  * distributed under the License is distributed on an "AS IS" BASIS,
+1460:  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+1461:  * See the License for the specific language governing permissions and
+1462:  * limitations under the License.
+1463:  */
+1464: /**
+
+--- line  ---
+1465:  * Top-level class for this SDK
+1466:  * @public
+1467:  */
+1468: class GoogleGenerativeAI {
+1469:     constructor(apiKey) {
+1470:         this.apiKey = apiKey;
+1471:     }
+1472:     /**
+1473:      * Gets a {@link GenerativeModel} instance for the provided model name.
+1474:      */
+1475:     getGenerativeModel(modelParams, requestOptions) {
+1476:         if (!modelParams.model) {
+1477:             throw new GoogleGenerativeAIError(`Must provide a model name. ` +
+1478:                 `Example: genai.getGenerativeModel({ model: 'my-model-name' })`);
+1479:         }
+1480:         return new GenerativeModel(this.apiKey, modelParams, requestOptions);
+1481:     }
+1482:     /**
+1483:      * Creates a {@link GenerativeModel} instance from provided content cache.
+1484:      */
+1485:     getGenerativeModelFromCachedContent(cachedContent, modelParams, requestOptions) {
+1486:         if (!cachedContent.name) {
+1487:             throw new GoogleGenerativeAIRequestInputError("Cached content must contain a `name` field.");
+1488:         }
+1489:         if (!cachedContent.model) {
+
+--- line  ---
+1466:  * @public
+1467:  */
+1468: class GoogleGenerativeAI {
+1469:     constructor(apiKey) {
+1470:         this.apiKey = apiKey;
+1471:     }
+1472:     /**
+1473:      * Gets a {@link GenerativeModel} instance for the provided model name.
+1474:      */
+1475:     getGenerativeModel(modelParams, requestOptions) {
+1476:         if (!modelParams.model) {
+1477:             throw new GoogleGenerativeAIError(`Must provide a model name. ` +
+1478:                 `Example: genai.getGenerativeModel({ model: 'my-model-name' })`);
+1479:         }
+1480:         return new GenerativeModel(this.apiKey, modelParams, requestOptions);
+1481:     }
+1482:     /**
+1483:      * Creates a {@link GenerativeModel} instance from provided content cache.
+1484:      */
+1485:     getGenerativeModelFromCachedContent(cachedContent, modelParams, requestOptions) {
+1486:         if (!cachedContent.name) {
+1487:             throw new GoogleGenerativeAIRequestInputError("Cached content must contain a `name` field.");
+1488:         }
+1489:         if (!cachedContent.model) {
+1490:             throw new GoogleGenerativeAIRequestInputError("Cached content must contain a `model` field.");
+
+--- line  ---
+1476:         if (!modelParams.model) {
+1477:             throw new GoogleGenerativeAIError(`Must provide a model name. ` +
+1478:                 `Example: genai.getGenerativeModel({ model: 'my-model-name' })`);
+1479:         }
+1480:         return new GenerativeModel(this.apiKey, modelParams, requestOptions);
+1481:     }
+1482:     /**
+1483:      * Creates a {@link GenerativeModel} instance from provided content cache.
+1484:      */
+1485:     getGenerativeModelFromCachedContent(cachedContent, modelParams, requestOptions) {
+1486:         if (!cachedContent.name) {
+1487:             throw new GoogleGenerativeAIRequestInputError("Cached content must contain a `name` field.");
+1488:         }
+1489:         if (!cachedContent.model) {
+1490:             throw new GoogleGenerativeAIRequestInputError("Cached content must contain a `model` field.");
+1491:         }
+1492:         /**
+1493:          * Not checking tools and toolConfig for now as it would require a deep
+1494:          * equality comparison and isn't likely to be a common case.
+1495:          */
+1496:         const disallowedDuplicates = ["model", "systemInstruction"];
+1497:         for (const key of disallowedDuplicates) {
+1498:             if ((modelParams === null || modelParams === void 0 ? void 0 : modelParams[key]) &&
+1499:                 cachedContent[key] &&
+1500:                 (modelParams === null || modelParams === void 0 ? void 0 : modelParams[key]) !== cachedContent[key]) {
+
+--- line  ---
+1513:                     ` (${modelParams[key]}) and cachedContent (${cachedContent[key]})`);
+1514:             }
+1515:         }
+1516:         const modelParamsFromCache = Object.assign(Object.assign({}, modelParams), { model: cachedContent.model, tools: cachedContent.tools, toolConfig: cachedContent.toolConfig, systemInstruction: cachedContent.systemInstruction, cachedContent });
+1517:         return new GenerativeModel(this.apiKey, modelParamsFromCache, requestOptions);
+1518:     }
+1519: }
+1520: 
+1521: exports.ChatSession = ChatSession;
+1522: exports.GenerativeModel = GenerativeModel;
+1523: exports.GoogleGenerativeAI = GoogleGenerativeAI;
+1524: exports.GoogleGenerativeAIAbortError = GoogleGenerativeAIAbortError;
+1525: exports.GoogleGenerativeAIError = GoogleGenerativeAIError;
+1526: exports.GoogleGenerativeAIFetchError = GoogleGenerativeAIFetchError;
+1527: exports.GoogleGenerativeAIRequestInputError = GoogleGenerativeAIRequestInputError;
+1528: exports.GoogleGenerativeAIResponseError = GoogleGenerativeAIResponseError;
+1529: exports.POSSIBLE_ROLES = POSSIBLE_ROLES;
+1530: //# sourceMappingURL=index.js.map
+
+

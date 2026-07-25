@@ -1,0 +1,426 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Intelligent Language Translator</title>
+    <style>
+      :root {
+        color-scheme: dark;
+      }
+      body {
+        font-family: Arial, sans-serif;
+        margin: 0;
+        padding: 24px;
+        background: linear-gradient(135deg, #0f172a, #111827);
+        color: #f8fafc;
+      }
+      .container {
+        max-width: 1200px;
+        margin: 0 auto;
+        background: rgba(15, 23, 42, 0.8);
+        border: 1px solid #334155;
+        border-radius: 18px;
+        padding: 24px;
+        box-shadow: 0 12px 40px rgba(0,0,0,0.25);
+      }
+      h1, h2, h3 { margin-top: 0; }
+      .grid { display: grid; grid-template-columns: 1fr 1fr; gap: 18px; }
+      .panel { background: #111827; border: 1px solid #334155; border-radius: 14px; padding: 16px; }
+      textarea, select, input[type="text"] { width: 100%; box-sizing: border-box; margin-top: 8px; padding: 10px; border-radius: 10px; border: 1px solid #475569; background: #020617; color: white; }
+      textarea { min-height: 180px; resize: vertical; }
+      .row { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 10px; }
+      button { background: #2563eb; color: white; border: 0; border-radius: 10px; padding: 10px 12px; cursor: pointer; }
+      button.secondary { background: #475569; }
+      .pill { display: inline-block; padding: 6px 10px; border-radius: 999px; background: #1e293b; margin-right: 6px; margin-top: 6px; }
+      .stats { display: grid; grid-template-columns: repeat(auto-fit, minmax(140px, 1fr)); gap: 10px; margin-top: 12px; }
+      .stat { background: #0f172a; border: 1px solid #334155; padding: 10px; border-radius: 10px; }
+      .confidence { margin-top: 12px; }
+      .bar { background: #334155; border-radius: 999px; overflow: hidden; height: 10px; }
+      .bar > div { height: 100%; background: linear-gradient(90deg, #22c55e, #38bdf8); width: 0%; }
+      .notes, .history, .favorites { margin-top: 16px; }
+      .item { background: #0f172a; border: 1px solid #334155; padding: 10px; border-radius: 10px; margin-top: 8px; }
+      .suggestions { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 10px; }
+      .suggestions button { background: #0f766e; }
+      .hidden { display: none; }
+      @media (max-width: 900px) { .grid { grid-template-columns: 1fr; } }
+    </style>
+  </head>
+  <body>
+    <div class="container">
+      <h1>🧠 Intelligent Language Translator</h1>
+      <div class="row">
+        <label>Source Language
+          <select id="sourceLanguage">
+            <option>English</option><option>Urdu</option><option>French</option><option>Arabic</option><option>Spanish</option><option>Hindi</option>
+          </select>
+        </label>
+        <label>Target Language
+          <select id="targetLanguage">
+            <option>Urdu</option><option>English</option><option>French</option><option>Arabic</option><option>Spanish</option><option>Hindi</option>
+          </select>
+        </label>
+        <label>Tone
+          <select id="tone">
+            <option>Default</option><option>Formal</option><option>Casual</option><option>Professional</option><option>Academic</option><option>Friendly</option><option>Business</option><option>Marketing</option><option>Travel</option><option>Technical</option>
+          </select>
+        </label>
+        <label>Style
+          <select id="style">
+            <option>Natural</option><option>Literal</option>
+          </select>
+        </label>
+      </div>
+      <div class="row">
+        <label><input type="checkbox" id="improveGrammar" /> Improve Grammar Before Translation</label>
+      </div>
+      <div class="grid" style="margin-top: 14px;">
+        <div class="panel">
+          <h3>Source Text</h3>
+          <textarea id="sourceText" placeholder="Enter text to translate...">Hello, how are you?</textarea>
+          <div class="row">
+            <button id="translateBtn">Translate</button>
+            <button class="secondary" id="swapBtn">Swap Languages</button>
+            <button class="secondary" id="clearBtn">Clear</button>
+          </div>
+          <div class="row">
+            <button class="secondary" id="copyOriginalBtn">Copy Original</button>
+            <button class="secondary" id="copyBothBtn">Copy Both</button>
+          </div>
+          <input type="text" id="context" placeholder="Optional context, e.g. Apple as a fruit or company" />
+        </div>
+        <div class="panel">
+          <h3>Translation</h3>
+          <textarea id="translatedText" placeholder="Translation will appear here..."></textarea>
+          <div class="row">
+            <button class="secondary" id="copyTranslationBtn">Copy Translation</button>
+            <button class="secondary" id="saveFavoriteBtn">Save Favorite</button>
+            <select id="downloadFormat" style="max-width: 120px;">
+              <option value="txt">TXT</option>
+              <option value="pdf">PDF</option>
+              <option value="docx">DOCX</option>
+            </select>
+            <button class="secondary" id="downloadBtn">Download</button>
+          </div>
+          <div class="suggestions" id="suggestions"></div>
+          <div class="confidence">
+            <strong>Translation Confidence</strong>
+            <div class="bar"><div id="confidenceBar"></div></div>
+            <div id="confidenceValue">0%</div>
+          </div>
+          <div class="notes" id="notes"></div>
+        </div>
+      </div>
+      <div class="stats" id="stats"></div>
+      <div class="favorites">
+        <h3>⭐ Favorites</h3>
+        <div id="favoritesList"></div>
+      </div>
+      <div class="history">
+        <h3>🕘 Translation History</h3>
+        <div class="row">
+          <input type="text" id="historySearch" placeholder="Search history" />
+          <button class="secondary" id="exportHistoryBtn">Export History</button>
+          <button class="secondary" id="clearHistoryBtn">Clear History</button>
+        </div>
+        <div id="historyList"></div>
+      </div>
+      <div class="history">
+        <h3>🗂️ Recent Languages</h3>
+        <div id="recentLanguages"></div>
+      </div>
+    </div>
+    <script>
+      const state = {
+        sourceLanguage: 'English',
+        targetLanguage: 'Urdu',
+        tone: 'Default',
+        style: 'Natural',
+        improveGrammar: false,
+        recentPairs: [],
+        lastTranslationTime: 0
+      };
+
+      const els = {
+        sourceLanguage: document.getElementById('sourceLanguage'),
+        targetLanguage: document.getElementById('targetLanguage'),
+        tone: document.getElementById('tone'),
+        style: document.getElementById('style'),
+        improveGrammar: document.getElementById('improveGrammar'),
+        sourceText: document.getElementById('sourceText'),
+        translatedText: document.getElementById('translatedText'),
+        context: document.getElementById('context'),
+        notes: document.getElementById('notes'),
+        confidenceBar: document.getElementById('confidenceBar'),
+        confidenceValue: document.getElementById('confidenceValue'),
+        suggestions: document.getElementById('suggestions'),
+        stats: document.getElementById('stats'),
+        favoritesList: document.getElementById('favoritesList'),
+        historyList: document.getElementById('historyList'),
+        historySearch: document.getElementById('historySearch'),
+        recentLanguages: document.getElementById('recentLanguages')
+      };
+
+      function readStorage(key) {
+        try { return JSON.parse(localStorage.getItem(key) || '[]'); } catch { return []; }
+      }
+
+      function saveStorage(key, value) { localStorage.setItem(key, JSON.stringify(value)); }
+
+      function buildStats(text, translated) {
+        const sourceWords = text.trim().split(/\s+/).filter(Boolean).length;
+        const translatedWords = translated.trim().split(/\s+/).filter(Boolean).length;
+        const chars = text.length;
+        const readingTime = Math.max(1, Math.ceil(sourceWords / 200));
+        return [
+          { label: 'Source Words', value: sourceWords },
+          { label: 'Translated Words', value: translatedWords },
+          { label: 'Characters', value: chars },
+          { label: 'Estimated Reading Time', value: `${readingTime} min` },
+          { label: 'Translation Time', value: `${state.lastTranslationTime} ms` },
+          { label: 'Selected Tone', value: state.tone },
+          { label: 'Selected Style', value: state.style }
+        ];
+      }
+
+      function renderStats(text, translated) {
+        const stats = buildStats(text, translated);
+        els.stats.innerHTML = stats.map(s => `<div class="stat"><strong>${s.label}</strong><div>${s.value}</div></div>`).join('');
+      }
+
+      function renderFavorites() {
+        const favorites = readStorage('favorites');
+        if (!favorites.length) {
+          els.favoritesList.innerHTML = '<div class="item">No favorites yet.</div>';
+          return;
+        }
+        els.favoritesList.innerHTML = favorites.map(item => `<div class="item"><strong>${item.sourceLanguage} → ${item.targetLanguage}</strong><div>${item.originalText}</div><div style="margin-top:6px; color:#93c5fd;">${item.translatedText}</div></div>`).join('');
+      }
+
+      function renderHistory(filter = '') {
+        const history = readStorage('history').sort((a,b) => new Date(b.timestamp) - new Date(a.timestamp));
+        const filtered = history.filter(item => JSON.stringify(item).toLowerCase().includes(filter.toLowerCase()));
+        if (!filtered.length) {
+          els.historyList.innerHTML = '<div class="item">No history yet.</div>';
+          return;
+        }
+        els.historyList.innerHTML = filtered.map(item => `<div class="item"><div class="row"><strong>${item.sourceLanguage} → ${item.targetLanguage}</strong><span class="pill">${item.tone}</span><span class="pill">${item.style}</span></div><div>${item.originalText}</div><div style="margin-top:6px; color:#93c5fd;">${item.translatedText}</div><div style="margin-top:6px; font-size: 12px; color:#94a3b8;">${item.timestamp}</div><div class="row"><button class="secondary" onclick="loadHistoryItem(${JSON.stringify(item).replace(/"/g, '&quot;')})">Load</button><button class="secondary" onclick="deleteHistoryItem('${item.timestamp}')">Delete</button></div></div>`).join('');
+      }
+
+      function renderRecentLanguages() {
+        const recent = readStorage('recentPairs').slice(-5).reverse();
+        els.recentLanguages.innerHTML = recent.length ? recent.map(pair => `<span class="pill">${pair}</span>`).join('') : '<div class="item">No recent pairs yet.</div>';
+      }
+
+      function updateRecentPairs() {
+        const pair = `${state.sourceLanguage} → ${state.targetLanguage}`;
+        const recent = readStorage('recentPairs');
+        const filtered = recent.filter(item => item !== pair);
+        filtered.push(pair);
+        saveStorage('recentPairs', filtered.slice(-5));
+        renderRecentLanguages();
+      }
+
+      async function translate() {
+        const text = els.sourceText.value.trim();
+        if (!text) return;
+        state.sourceLanguage = els.sourceLanguage.value;
+        state.targetLanguage = els.targetLanguage.value;
+        state.tone = els.tone.value;
+        state.style = els.style.value;
+        state.improveGrammar = els.improveGrammar.checked;
+        const startedAt = performance.now();
+
+        els.translatedText.value = 'Translating...';
+        els.notes.innerHTML = '';
+        els.confidenceBar.style.width = '0%';
+        els.confidenceValue.textContent = '0%';
+
+        try {
+          const response = await fetch('/api/translate', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+              text,
+              sourceLanguage: state.sourceLanguage,
+              targetLanguage: state.targetLanguage,
+              tone: state.tone,
+              style: state.style,
+              improveGrammar: state.improveGrammar,
+              suggestion: null,
+              context: els.context.value.trim()
+            })
+          });
+          const data = await response.json();
+          if (data.fallback) {
+            els.translatedText.value = data.translatedText;
+            els.notes.innerHTML = `<div class="item">${data.notes}</div>`;
+          } else {
+            els.translatedText.value = data.translatedText;
+            els.notes.innerHTML = data.notes.map(note => `<div class="item">${note}</div>`).join('');
+            els.confidenceBar.style.width = `${data.confidence}%`;
+            els.confidenceValue.textContent = `${data.confidence}%`;
+          }
+          state.lastTranslationTime = Math.round(performance.now() - startedAt);
+          renderStats(text, els.translatedText.value);
+          saveHistory(text, els.translatedText.value, data.notes || [], data.confidence || 0);
+          updateRecentPairs();
+          renderSuggestions();
+        } catch (error) {
+          els.translatedText.value = 'Translation failed.';
+        }
+      }
+
+      function saveHistory(originalText, translatedText, notes, confidence) {
+        const history = readStorage('history');
+        history.push({
+          timestamp: new Date().toLocaleString(),
+          sourceLanguage: state.sourceLanguage,
+          targetLanguage: state.targetLanguage,
+          tone: state.tone,
+          style: state.style,
+          originalText,
+          translatedText,
+          notes,
+          confidence
+        });
+        saveStorage('history', history.slice(-100));
+        renderHistory(els.historySearch.value);
+      }
+
+      function renderSuggestions() {
+        const suggestions = ['Make More Formal', 'Make More Casual', 'Simplify', 'Shorten', 'Expand', 'Improve Grammar'];
+        els.suggestions.innerHTML = suggestions.map(s => `<button onclick="applySuggestion('${s}')">✨ ${s}</button>`).join('');
+      }
+
+      async function applySuggestion(suggestion) {
+        const text = els.sourceText.value.trim();
+        const response = await fetch('/api/translate', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            text,
+            sourceLanguage: state.sourceLanguage,
+            targetLanguage: state.targetLanguage,
+            tone: state.tone,
+            style: state.style,
+            improveGrammar: state.improveGrammar,
+            suggestion,
+            context: els.context.value.trim()
+          })
+        });
+        const data = await response.json();
+        els.translatedText.value = data.translatedText || 'Translation failed.';
+        els.notes.innerHTML = (data.notes || []).map(note => `<div class="item">${note}</div>`).join('');
+        els.confidenceBar.style.width = `${data.confidence || 0}%`;
+        els.confidenceValue.textContent = `${data.confidence || 0}%`;
+        renderStats(els.sourceText.value, els.translatedText.value);
+        saveHistory(els.sourceText.value, els.translatedText.value, data.notes || [], data.confidence || 0);
+      }
+
+      function copyText(text) {
+        navigator.clipboard.writeText(text);
+      }
+
+      function clearFields() {
+        els.sourceText.value = '';
+        els.translatedText.value = '';
+        els.context.value = '';
+        els.notes.innerHTML = '';
+        els.confidenceBar.style.width = '0%';
+        els.confidenceValue.textContent = '0%';
+        els.stats.innerHTML = '';
+      }
+
+      function makeDownload(type) {
+        const content = `${els.sourceText.value}\n\n---TRANSLATION---\n\n${els.translatedText.value}`;
+        const mimeType = type === 'pdf' ? 'application/pdf' : type === 'docx' ? 'application/vnd.openxmlformats-officedocument.wordprocessingml.document' : 'text/plain';
+        let blob;
+        if (type === 'pdf') {
+          blob = new Blob([`%PDF-1.4\n1 0 obj<< /Type /Catalog /Pages 2 0 R >>endobj\n2 0 obj<< /Type /Pages /Kids [3 0 R] /Count 1 >>endobj\n3 0 obj<< /Type /Page /Parent 2 0 R /MediaBox [0 0 612 792] /Contents 4 0 R /Resources << /Font << /F1 5 0 R >> >> >>endobj\n4 0 obj<< /Length 44 >>stream\nBT /F1 12 Tf 72 720 (${content.replace(/\)/g, '\\)').replace(/\\/g, '\\\\')}) Tj ET\nendstream\nendobj\n5 0 obj<< /Type /Font /Subtype /Type1 /BaseFont /Helvetica >>endobj\nxref\n0 6\n0000000000 65535 f \n0000000010 00000 n \n0000000062 00000 n \n0000000119 00000 n \n0000000206 00000 n \n0000000300 00000 n \ntrailer<< /Size 6 /Root 1 0 R >>\nstartxref\n0\n%%EOF`], { type: mimeType });
+        } else if (type === 'docx') {
+          blob = new Blob([content], { type: mimeType });
+        } else {
+          blob = new Blob([content], { type: mimeType });
+        }
+        const url = URL.createObjectURL(blob);
+        const link = document.createElement('a');
+        link.href = url;
+        link.download = `translation.${type}`;
+        link.click();
+        URL.revokeObjectURL(url);
+      }
+
+      function saveFavorite() {
+        const favorites = readStorage('favorites');
+        favorites.push({
+          timestamp: new Date().toLocaleString(),
+          sourceLanguage: state.sourceLanguage,
+          targetLanguage: state.targetLanguage,
+          tone: state.tone,
+          style: state.style,
+          originalText: els.sourceText.value,
+          translatedText: els.translatedText.value
+        });
+        saveStorage('favorites', favorites.slice(-20));
+        renderFavorites();
+      }
+
+      function deleteHistoryItem(timestamp) {
+        const history = readStorage('history').filter(item => item.timestamp !== timestamp);
+        saveStorage('history', history);
+        renderHistory(els.historySearch.value);
+      }
+
+      function loadHistoryItem(item) {
+        els.sourceText.value = item.originalText;
+        els.translatedText.value = item.translatedText;
+        els.sourceLanguage.value = item.sourceLanguage;
+        els.targetLanguage.value = item.targetLanguage;
+        els.tone.value = item.tone;
+        els.style.value = item.style;
+        state.sourceLanguage = item.sourceLanguage;
+        state.targetLanguage = item.targetLanguage;
+        state.tone = item.tone;
+        state.style = item.style;
+        renderStats(item.originalText, item.translatedText);
+      }
+
+      document.getElementById('translateBtn').addEventListener('click', translate);
+      document.getElementById('swapBtn').addEventListener('click', () => {
+        [els.sourceLanguage.value, els.targetLanguage.value] = [els.targetLanguage.value, els.sourceLanguage.value];
+        [state.sourceLanguage, state.targetLanguage] = [state.targetLanguage, state.sourceLanguage];
+      });
+      document.getElementById('clearBtn').addEventListener('click', clearFields);
+      document.getElementById('copyOriginalBtn').addEventListener('click', () => copyText(els.sourceText.value));
+      document.getElementById('copyTranslationBtn').addEventListener('click', () => copyText(els.translatedText.value));
+      document.getElementById('copyBothBtn').addEventListener('click', () => copyText(`${els.sourceText.value}\n\n${els.translatedText.value}`));
+      document.getElementById('saveFavoriteBtn').addEventListener('click', saveFavorite);
+      document.getElementById('downloadBtn').addEventListener('click', () => makeDownload(document.getElementById('downloadFormat').value));
+      document.getElementById('exportHistoryBtn').addEventListener('click', () => {
+        const history = readStorage('history');
+        const blob = new Blob([JSON.stringify(history, null, 2)], { type: 'application/json' });
+        const url = URL.createObjectURL(blob);
+        const link = document.createElement('a');
+        link.href = url;
+        link.download = 'translation-history.json';
+        link.click();
+        URL.revokeObjectURL(url);
+      });
+      document.getElementById('clearHistoryBtn').addEventListener('click', () => {
+        saveStorage('history', []);
+        renderHistory('');
+      });
+      els.historySearch.addEventListener('input', (e) => renderHistory(e.target.value));
+
+      window.applySuggestion = applySuggestion;
+      window.loadHistoryItem = loadHistoryItem;
+      window.deleteHistoryItem = deleteHistoryItem;
+
+      renderFavorites();
+      renderHistory('');
+      renderRecentLanguages();
+      renderSuggestions();
+    </script>
+  </body>
+</html>
