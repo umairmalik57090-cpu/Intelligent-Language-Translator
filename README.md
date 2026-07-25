@@ -13,7 +13,7 @@
 
 # 📖 Overview
 
-**LinguaAI** is a modern AI-powered language translation application built with **Python**, **Streamlit**, and **Google Gemini AI**. Unlike traditional translators, LinguaAI understands context and allows users to customize the tone and style of translations, producing natural, professional, and accurate results.
+**AI-Powered Intelligent Language Translator** is a modern AI-powered language translation application built with **Python**, **Streamlit**, and **Google Gemini AI**. Unlike traditional translators, LinguaAI understands context and allows users to customize the tone and style of translations, producing natural, professional, and accurate results.
 
 Designed with a clean and responsive interface, LinguaAI supports multiple languages, translation history, smart formatting preservation, and several AI-powered enhancements to improve the translation experience.
 
