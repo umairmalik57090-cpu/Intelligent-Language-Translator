@@ -251,20 +251,7 @@ Save Translation History
 - Hindi
 - Arabic
 - French
-- German
 - Spanish
-- Italian
-- Chinese
-- Japanese
-- Korean
-- Russian
-- Turkish
-- Portuguese
-- Dutch
-- Bengali
-- Punjabi
-- Persian
-- Auto Detect
 
 ---
 
